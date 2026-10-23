@@ -9,15 +9,21 @@
   gtag('js', new Date());
   gtag('config', 'G-020D2NVH9F');
 </script>
+<script src="season.js"></script>
 <meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="favicon.png">
-<link rel="apple-touch-icon" href="favicon.png">
-<meta property="og:title" content="AIB College Basketball Ratings 2025-26">
-<meta property="og:description" content="College basketball rankings, bracketology, and analytics powered by AI Bracketology">
-<meta property="og:image" content="https://ai-bracketology.github.io/cbb-rankings/docs/new_header.png">
-<meta property="og:url" content="https://ai-bracketology.github.io/cbb-rankings/docs/">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- link previews (X, iMessage, Slack...): crawlers don't run JS, so no season in the title -->
+<meta name="description" content="College basketball team and player ratings, game predictions, bracketology and analytics from grantley cbb">
+<meta property="og:title" content="grantley cbb · College Basketball Ratings">
+<meta property="og:description" content="Team and player ratings, game predictions, bracketology and analytics from grantley cbb">
+<meta property="og:url" content="https://grantleycbb.github.io/cbb-rankings/">
 <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://grantleycbb.github.io/cbb-rankings/grantley_cbb.png">
+<meta name="twitter:card" content="summary">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <script>
@@ -30,7 +36,7 @@
   });
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIB College Basketball Ratings 2025-26</title>
+<title>grantley cbb · College Basketball Ratings</title>
 <style>
 /* ── Theme variables ── */
 :root {
@@ -70,9 +76,10 @@ a:hover { text-decoration: underline; }
   padding: 18px 16px 14px; border-bottom: 1px solid var(--sidebar-border);
   text-align: center;
 }
-.sidebar-brand h1 {
-  font-size: .95rem; font-weight: 700; color: var(--text);
-  line-height: 1.3;
+.sidebar-brand h1 {  /* the "grantley cbb" wordmark */
+  font-family: "Righteous", -apple-system, "Segoe UI", sans-serif;
+  font-size: 1.3rem; font-weight: 400; letter-spacing: .5px; color: var(--text);
+  line-height: 1.3; white-space: nowrap;
 }
 .sidebar-brand .subtitle {
   font-size: .72rem; color: var(--text-dim); margin-top: 2px;
@@ -146,11 +153,27 @@ header {
 header h2 {
   font-size: 1.1rem; font-weight: 700; color: var(--text); flex: 1;
 }
+header .page-badge:empty { display: none; }
 header .page-badge {
   font-size: .7rem; color: var(--text-dim);
   background: var(--surface); border: 1px solid var(--border);
   padding: 3px 10px; border-radius: 12px;
 }
+
+/* Per-page season dropdown in the header (only on season-specific pages) */
+.page-season { font-size: .75rem; color: var(--text-dim); display: flex; align-items: center; gap: 6px; }
+.page-season select, .page-season-note a { font-size: .8rem; }
+.page-season select {
+  background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  border-radius: 6px; padding: 3px 6px; cursor: pointer;
+}
+.page-season-note { font-size: .75rem; color: var(--text-dim); }
+.page-season-note a { color: var(--accent); cursor: pointer; }
+
+/* My Bracket: projected / today toggle */
+.bk-mode { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 6px;
+  padding: 5px 12px; font-size: .8rem; cursor: pointer; }
+.bk-mode.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
 /* ── Controls ── */
 .controls {
@@ -276,6 +299,18 @@ tbody tr:hover { background: rgba(88,166,255,.04); }
   background: rgba(210,153,34,.15); padding: 0 4px; border-radius: 3px;
   margin-left: 4px; vertical-align: middle;
 }
+
+.pi-badge {
+  font-size: .55rem; font-weight: 700; color: var(--accent);
+  background: rgba(88,166,255,.15); padding: 0 4px; border-radius: 3px;
+  margin-left: 4px; vertical-align: middle; cursor: help;
+}
+.playin-section { margin-top: 16px; }
+.playin-section .bubble-box { margin-bottom: 0; }
+.bubble-header.playin { background: rgba(88,166,255,.1); color: var(--accent); }
+.playin-game { display: flex; align-items: center; gap: 6px; padding: 5px 10px; border-top: 1px solid var(--border); font-size: .78rem; }
+.playin-game .vs { color: var(--text-dim); font-size: .7rem; }
+.playin-game .pi-seed { margin-left: auto; color: var(--text-dim); font-size: .7rem; white-space: nowrap; }
 
 /* ── Bubble section ── */
 .bubble-section {
@@ -412,6 +447,27 @@ tr:has(.gp-injury-cb:checked) .gp-player-name { text-decoration: line-through; c
 }
 .seed-odds-controls input::placeholder { color: var(--text-dim); }
 .seed-odds-controls .row-count { font-size: .75rem; color: var(--text-dim); }
+
+/* ── Preseason projections ── */
+.pre-note { font-size: .78rem; color: var(--text-dim); margin: 2px 0 6px; line-height: 1.5; max-width: 980px; }
+.pre-note strong { color: var(--text); }
+.pre-toggle { font-size: .78rem; color: var(--text-dim); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.pre-toggle input { width: auto !important; padding: 0 !important; margin: 0; }
+.conf-badge {
+  display: inline-block; font-size: .6rem; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase; padding: 1px 7px; border-radius: 10px; white-space: nowrap;
+  border: 1px solid var(--yellow); color: var(--yellow);
+}
+.conf-badge.muted { border-color: var(--border); color: var(--text-dim); }
+.pre-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 12px; }
+.pre-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+.pre-card .lbl { font-size: .66rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: .04em; }
+.pre-card .val { font-size: 1.15rem; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.pre-card .sub { font-size: .68rem; color: var(--text-dim); margin-top: 2px; }
+.pre-basis { color: var(--text-dim); font-size: .72rem; white-space: normal; text-align: left !important; min-width: 220px; }
+.pre-select { padding: 5px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: .8rem; }
+tr.pre-dim td { color: var(--text-dim); }
+@media (max-width: 900px) { .pre-cards { grid-template-columns: repeat(2, 1fr); } }
 
 /* ── Comparison tool ── */
 #compareWrap { padding: 0; }
@@ -596,6 +652,7 @@ footer {
   .sidebar.open { left: 0; }
   .main-content { margin-left: 0; }
   .mobile-toggle { display: flex !important; }
+  header { padding-left: 64px; }  /* clear the fixed menu button */
   .bracket-grid { grid-template-columns: 1fr; }
   .bubble-section { grid-template-columns: 1fr; }
   .welcome-panel .feature-grid { grid-template-columns: 1fr; }
@@ -1016,27 +1073,6 @@ footer {
 </head>
 <body>
 
-<!-- ══════ OFFSEASON SPLASH ══════ -->
-<!-- Remove this entire block to restore the live site for next season -->
-<div id="offseasonSplash" style="
-  position:fixed;inset:0;z-index:99999;
-  background:var(--bg);
-  display:flex;align-items:center;justify-content:center;
-  flex-direction:column;text-align:center;padding:2rem;
-">
-  <img src="favicon.png" alt="AIB" style="width:80px;height:80px;margin-bottom:1.5rem;border-radius:16px;">
-  <h1 style="color:var(--accent);font-size:1.8rem;margin:0 0 .75rem;">AI Bracketology</h1>
-  <p style="color:var(--text);font-size:1.15rem;max-width:480px;line-height:1.6;margin:0 0 1.5rem;">
-    Website undergoing maintenance.<br>
-    Thanks to all for using it this season!<br>
-    See you in <b>2026-27</b> 🏀
-  </p>
-  <p style="color:var(--text-dim);font-size:.82rem;">
-    Follow <a href="https://x.com/ai_bracketology" style="color:var(--accent);text-decoration:none;">@ai_bracketology</a> for updates
-  </p>
-</div>
-<!-- ══════ END OFFSEASON SPLASH ══════ -->
-
 <!-- Mobile hamburger -->
 <button class="mobile-toggle" id="mobileToggle">&#9776;</button>
 <div class="mobile-overlay" id="mobileOverlay"></div>
@@ -1044,8 +1080,8 @@ footer {
 <!-- ──── SIDEBAR ──── -->
 <nav class="sidebar" id="sidebar">
   <div class="sidebar-brand">
-    <h1>&#127936;&#129302; AIB Ratings</h1>
-    <div class="subtitle">College Basketball 2025-26</div>
+    <h1>&#127936; grantley cbb &#127936;</h1>
+    <div class="subtitle">College Basketball <span id="subtitleSeason">2025-26</span></div>
     <div class="brand-controls">
       <button id="themeToggle">&#127769;</button>
     </div>
@@ -1066,6 +1102,7 @@ footer {
     </div>
     <div class="nav-submenu" id="subTeamRatings">
       <div class="nav-sub-item" data-page="rank">Team Efficiency Ratings</div>
+      <div class="nav-sub-item" data-page="preseason">Preseason Projections</div>
       <div class="nav-sub-item" data-page="advOff">Advanced Offensive</div>
       <div class="nav-sub-item" data-page="advDef">Advanced Defensive</div>
     </div>
@@ -1092,12 +1129,13 @@ footer {
     </div>
     <div class="nav-submenu" id="subPlayerRatings">
       <div class="nav-sub-item" data-page="players">Full Rankings</div>
+      <div class="nav-sub-item" data-page="prePlayers">Preseason Projections</div>
       <div class="nav-sub-item" data-page="ppPage">Player Page</div>
     </div>
 
     <!-- Conference Ratings (expandable) -->
     <div class="nav-item" data-toggle="confRatings">
-      <span class="nav-icon">&#127951;</span>
+      <span class="nav-icon">&#127967;&#65039;</span>
       <span class="nav-label">Conference Ratings</span>
       <span class="nav-expand" id="expandConf">&#9654;</span>
     </div>
@@ -1116,6 +1154,7 @@ footer {
       <div class="nav-sub-item" data-page="gameResults">All Results</div>
       <div class="nav-sub-item" data-page="gamePreview">Game Preview</div>
       <div class="nav-sub-item" data-page="boxScore">Box Score</div>
+      <div class="nav-sub-item" data-page="predTracker">Prediction Tracker</div>
     </div>
 
     <!-- Bracketology (expandable) -->
@@ -1153,7 +1192,7 @@ footer {
   </div>
 
   <div class="sidebar-footer">
-    Built by <a href="https://x.com/AI_Bracketology" target="_blank">AI Bracketology</a><br>Data sourced from ESPN
+    Built by <a href="https://x.com/AI_Bracketology" target="_blank">grantley cbb</a><br>Data from CollegeBasketballData &amp; ESPN
   </div>
 </nav>
 
@@ -1164,12 +1203,15 @@ footer {
   <header>
     <h2 id="pageTitle">Welcome</h2>
     <span class="page-badge" id="pageBadge"></span>
+    <label class="page-season" id="pageSeasonWrap" style="display:none">Season
+      <select id="pageSeasonSelect" title="Season"></select></label>
+    <span class="page-season-note" id="pageSeasonNote" style="display:none"></span>
   </header>
 
   <!-- ===== WELCOME PANEL ===== -->
   <div class="panel active" id="panelWelcome">
     <div class="welcome-panel">
-      <h2 id="dashWelcomeTitle">Welcome to AIB College Basketball Ratings</h2>
+      <h2 id="dashWelcomeTitle">Welcome to grantley cbb</h2>
       <div class="dash-outer" id="dashOuter">
         <div class="dash-left">
           <div class="dash-grid" id="dashGrid">
@@ -1200,7 +1242,7 @@ footer {
         </div>
         <div class="feature-card" data-nav="brack">
           <h3>&#127942; Bracketology</h3>
-          <p>Full 68-team projected bracket, bubble watch, seed odds, and head-to-head comparison tools.</p>
+          <p>Full projected bracket (76 teams with a 12-game play-in round from 2026-27), bubble watch, seed odds, and head-to-head comparison tools.</p>
         </div>
       </div>
     </div>
@@ -1237,10 +1279,13 @@ footer {
       </div>
       <span id="tpTeamName" style="font-weight:700;font-size:1.05rem;"></span>
       <span id="tpRecord" style="color:var(--text-dim);font-size:.9rem;"></span>
+      <span style="color:var(--text-dim);font-size:.78rem;">Season:</span>
+      <select id="tpSeasonSelect" title="View this team in another season"></select>
     </div>
 
     <!-- Overview sub-panel -->
     <div class="tp-sub" id="tpSubOverview" style="display:none;">
+      <div id="tpPreseason" style="display:none;margin-bottom:20px;"></div>
       <div id="tpSummaryCards" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
         <div>
@@ -1256,7 +1301,7 @@ footer {
         <!-- Team Advanced Stats Box -->
         <div id="tpAdvStatsBox" class="pp-stats-panel" style="margin:0;"></div>
         <div>
-          <h3 style="font-size:.92rem;margin-bottom:6px;">Upcoming Games</h3>
+          <h3 style="font-size:.92rem;margin-bottom:6px;">Upcoming Games <span id="tpProjRecord" style="font-size:.75rem;font-weight:500;color:var(--text-dim)"></span></h3>
           <div style="overflow-x:auto"><table class="tp-table" id="tpUpcomingTable"><thead><tr></tr></thead><tbody></tbody></table></div>
         </div>
       </div>
@@ -1325,6 +1370,8 @@ footer {
           <h3 style="font-size:.92rem;">📊 What-If Simulator</h3>
           <button class="compare-toggle" id="tpWhatifReset">Reset all</button>
         </div>
+        <p class="pre-note" id="tpWhatifNote" style="display:none;margin:-4px 0 10px">Before the first game, opponent ranks, ratings, quadrants and the
+          tournament odds come from the preseason projections. They switch to in-season ratings as games are played.</p>
         <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
           <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 16px;text-align:center;min-width:120px;">
             <div style="font-size:.72rem;color:var(--text-dim);text-transform:uppercase;">Projected Record</div>
@@ -1428,6 +1475,8 @@ footer {
       </div>
       <span id="ppPlayerLabel" style="font-weight:700;font-size:1.05rem;"></span>
       <span id="ppSubInfo" style="color:var(--text-dim);font-size:.9rem;"></span>
+      <span style="color:var(--text-dim);font-size:.78rem;">Season:</span>
+      <select id="ppSeasonSelect" title="Seasons this player played"></select>
     </div>
 
     <!-- Hero section -->
@@ -1529,7 +1578,13 @@ footer {
   <!-- ===== BRACKET PANEL ===== -->
   <div class="panel" id="panelBrack">
     <div id="bracketWrap">
+      <div id="bracketModeBar" style="display:none;margin-bottom:8px;gap:6px;align-items:center;flex-wrap:wrap">
+        <button class="bk-mode" data-mode="proj">Projected Selection Sunday</button>
+        <button class="bk-mode" data-mode="today">If the season ended today</button>
+      </div>
+      <p class="pre-note" id="bracketNote" style="display:none"></p>
       <div class="bracket-grid" id="bracketGrid"></div>
+      <div class="bubble-section playin-section" id="playinSection"></div>
       <div class="bubble-section" id="bubbleSection"></div>
     </div>
   </div>
@@ -1547,6 +1602,58 @@ footer {
           <tbody id="seedOddsTbody"></tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <!-- ===== PRESEASON PROJECTIONS PANEL ===== -->
+  <div class="panel" id="panelPreseason">
+    <p class="pre-note" id="preseasonNote"></p>
+    <div class="seed-odds-controls">
+      <input type="text" id="preseasonSearch" placeholder="Search teams or conferences...">
+      <label class="pre-toggle"><input type="checkbox" id="preseasonHideLow"> Hide low-confidence teams</label>
+      <span class="row-count" id="preseasonCount"></span>
+    </div>
+    <div style="overflow-x:auto">
+      <table id="preseasonTable">
+        <thead><tr id="preseasonHeader"></tr></thead>
+        <tbody id="preseasonTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== PRESEASON PLAYER PROJECTIONS PANEL ===== -->
+  <div class="panel" id="panelPrePlayers">
+    <p class="pre-note" id="prePlayersNote"></p>
+    <div class="seed-odds-controls" style="flex-wrap:wrap;">
+      <input type="text" id="prePlayersSearch" placeholder="Search players or teams...">
+      <select id="prePlayersConf" class="pre-select"><option value="">All Conferences</option></select>
+      <select id="prePlayersRole" class="pre-select">
+        <option value="">All roles</option>
+        <option value="returner">Returners</option>
+        <option value="transfer">Transfers</option>
+        <option value="freshman">Freshmen</option>
+      </select>
+      <label class="pre-toggle">Min proj MPG
+        <select id="prePlayersMinShare" class="pre-select">
+          <option value="0">Any</option>
+          <option value="0.05">10</option>
+          <option value="0.08" selected>16</option>
+          <option value="0.12">24</option>
+        </select></label>
+      <label class="pre-toggle"><input type="checkbox" id="prePlayersHideLow" checked> Hide low confidence</label>
+      <select id="prePlayersSize" class="pre-select">
+        <option value="100">Top 100</option>
+        <option value="250">Top 250</option>
+        <option value="500">Top 500</option>
+        <option value="100000">All</option>
+      </select>
+      <span class="row-count" id="prePlayersCount"></span>
+    </div>
+    <div style="overflow-x:auto">
+      <table id="prePlayersTable">
+        <thead><tr id="prePlayersHeader"></tr></thead>
+        <tbody id="prePlayersTbody"></tbody>
+      </table>
     </div>
   </div>
 
@@ -1652,6 +1759,11 @@ footer {
     </div>
   </div>
 
+  <!-- ===== PREDICTION TRACKER PANEL ===== -->
+  <div class="panel" id="panelPredTracker">
+    <div id="ptContent"><p style="color:var(--text-dim)">Loading predictions…</p></div>
+  </div>
+
   <!-- ===== GAME PREVIEW PANEL ===== -->
   <div class="panel" id="panelGamePreview">
     <div id="gamePreviewContent">
@@ -1676,12 +1788,13 @@ footer {
         Formula: <code style="background:var(--surface);padding:2px 6px;border-radius:4px;">bPOP = |ΔWP| × |WAB stake| × bubble weight</code><br>
         <b>ΔWP</b> = win-probability swing caused by the play &nbsp;·&nbsp;
         <b>WAB stake</b> = max of WAB lost or WAB they could have gained by winning &nbsp;·&nbsp;
-        <b>Bubble weight</b> = Gaussian centered on the SLCT cutline (last at-large team's SLCT score); near-zero for locks and longshots
+        <b>Bubble weight</b> = Gaussian on SLCT rank, centered on the cutline (the last at-large team); near-zero for locks and longshots
       </p>
       <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
         <input type="text" id="bpopSearchBox" placeholder="Search teams..." style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 12px;color:var(--text);font-size:.82rem;width:220px;">
         <span class="row-count" id="bpopRowCount"></span>
       </div>
+      <div style="overflow-x:auto">
       <table id="bpopTable">
         <thead>
           <tr>
@@ -1700,6 +1813,7 @@ footer {
         </thead>
         <tbody id="bpopTbody"></tbody>
       </table>
+      </div>
     </div>
   </div>
 
@@ -1891,6 +2005,7 @@ var BUBBLE_COLS = [
   { key: "q3_record",        label: "Q3",           fmt: function(v){return v != null ? v : "\u2013";},       align: "center", sortKey: "q3_w", quadTip: 3 },
   { key: "q4_record",        label: "Q4",           fmt: function(v){return v != null ? v : "\u2013";},       align: "center", sortKey: "q4_w", quadTip: 4 },
   { key: "season_wab",       label: "WAB",          fmt: function(v){return v != null ? (v >= 0 ? "+" : "") + v.toFixed(1) : "\u2013";}, cls: function(v){ return v > 0 ? "net-pos" : v < 0 ? "net-neg" : ""; }, heat: "high" },
+  { key: "proj_wab",         label: "Proj WAB",     fmt: function(v){return v != null ? (v >= 0 ? "+" : "") + v.toFixed(1) : "\u2013";}, cls: function(v){ return v > 0 ? "net-pos" : v < 0 ? "net-neg" : ""; }, heat: "high" },
   { key: "slct",             label: "SLCT",          fmt: function(v){return v != null ? v.toFixed(2) : "\u2013";},  heat: "high" }
 ];
 
@@ -1952,6 +2067,93 @@ function getCols() {
   return RANK_COLS;
 }
 
+/* ---- season switcher ----
+   No site-wide dropdown: pages whose content is one season's data get a
+   "Season" dropdown in the header (SEASON_PAGES); the team and player pages
+   have their own (only the seasons that team/player has). Pages that span
+   every season (Seed History) or only exist for the current one (Welcome,
+   preseason projections) have none -- those show a "back to <current>"
+   link if an older season is loaded. Switching reloads the site for that
+   season and stays on the same page. */
+var SEASON_PAGES = {
+  rank: "team_pages", quad: "team_pages", advOff: "team_pages", advDef: "team_pages",
+  bubble: "team_pages", sheets: "team_pages", compare: "team_pages", brack: "team_pages",
+  seedOdds: "team_pages", confRatings: "team_pages", confDetail: "team_pages",
+  gameResults: "team_pages", predTracker: "team_pages", bpop: "team_pages", timeoutAnalysis: "team_pages",
+  players: "player_pages"
+};
+/* current-season-only pages: offer a way back when an old season is loaded */
+var CURRENT_ONLY_PAGES = ["welcome", "preseason", "prePlayers"];
+var _seasonList = [];
+function goToSeason(newSeason, hash) {
+  setSeason(newSeason);
+  // Rewrite ?season= too: it outranks the saved choice in getSeason(), so
+  // a plain reload of a ?season=2027 URL would land right back on 2027.
+  var u = new URL(window.location.href);
+  u.searchParams.set("season", newSeason);
+  u.hash = hash || activePage || "welcome";
+  window.location.href = u.toString();
+}
+function updatePageSeasonControl(page) {
+  var wrap = document.getElementById("pageSeasonWrap");
+  var note = document.getElementById("pageSeasonNote");
+  var sel = document.getElementById("pageSeasonSelect");
+  var need = SEASON_PAGES[page];
+  var cur = getSeason();
+  wrap.style.display = need && _seasonList.length ? "" : "none";
+  if (need) {
+    for (var i = 0; i < sel.options.length; i++) {
+      var o = sel.options[i], m = _seasonList[_seasonList.length - 1 - i];
+      // the current season is always selectable (its pages fill in as games are played)
+      var ok = m[need] || m.season === DEFAULT_SEASON || String(m.season) === cur;
+      o.disabled = !ok;
+      o.textContent = m.label + (ok ? "" : " (unavailable)");
+    }
+  }
+  var showNote = CURRENT_ONLY_PAGES.indexOf(page) >= 0 && cur !== String(DEFAULT_SEASON) && _seasonList.length;
+  note.style.display = showNote ? "" : "none";
+  if (showNote) {
+    var lab = function(sv) { var m = _seasonList.filter(function(x){ return String(x.season) === String(sv); })[0]; return m ? m.label : sv; };
+    note.innerHTML = "Viewing " + lab(cur) + " &middot; <a id=\"pageSeasonBack\">back to " + lab(DEFAULT_SEASON) + "</a>";
+    document.getElementById("pageSeasonBack").onclick = function() { goToSeason(String(DEFAULT_SEASON), page); };
+  }
+}
+loadSeasonsManifest().then(function(seasons) {
+  _seasonList = seasons;
+  var sel = document.getElementById("pageSeasonSelect");
+  var cur = getSeason();
+  seasons.slice().reverse().forEach(function(m) {  // newest first
+    var o = document.createElement("option");
+    o.value = String(m.season);
+    o.textContent = m.label;
+    if (String(m.season) === cur) o.selected = true;
+    sel.appendChild(o);
+  });
+  sel.addEventListener("change", function() {
+    var h = activePage === "confDetail" && confDetailName ? "confDetail&conf=" + encodeURIComponent(confDetailName) : activePage;
+    goToSeason(sel.value, h);
+  });
+  updatePageSeasonControl(activePage);
+});
+/* Team page's own season dropdown: same team, same tab, another season
+   (the whole site reloads for that season, like the header dropdown). */
+initSeasonSelect(document.getElementById("tpSeasonSelect"), "team_pages", function(newSeason) {
+  setSeason(newSeason);
+  var u = new URL(window.location.href);
+  u.searchParams.set("season", newSeason);
+  u.hash = (activePage && activePage.indexOf("tp") === 0 ? activePage : "tpOverview") +
+           "&team=" + encodeURIComponent(tpSelectedTeam || "");
+  window.location.href = u.toString();
+});
+(function() {
+  var seasonEl = document.getElementById("subtitleSeason");
+  loadSeasonsManifest().then(function(seasons) {
+    var cur = getSeason();
+    var m = seasons.filter(function(s) { return String(s.season) === cur; })[0];
+    if (m) { seasonEl.textContent = m.label; document.title = "grantley cbb · College Basketball Ratings " + m.label; }
+  });
+})();
+
 /* ================================================================
    DATA LOADING
    ================================================================ */
@@ -1960,21 +2162,27 @@ var SIM = {};
 var GAMES_DATA = {};
 var NET_RANKS = {};
 var SHEETS_DATA = [];
+var SHEETS_LOADED = false;
 var PLAYERS_DATA = [];
+/* Fetch-completion flags (not .length checks) -- a season with no games
+   played yet (e.g. before opening night) legitimately has empty
+   GAMES_DATA/PLAYERS_DATA forever, so tryRenderDashboard() must not wait
+   on non-empty results, only on each fetch having settled at least once. */
+var DATA_LOADED = false, GAMES_LOADED = false, PLAYERS_LOADED = false;
 var SCHEDULE_RAW = {};
 var SEED_HISTORY = {};
 var TIMEOUT_DATA = [];
 var BPOP_DATA = [];
 
-fetch("bpop.json")
+fetch(dataUrl("bpop.json"))
   .then(function(r){ return r.json(); })
   .then(function(d){ BPOP_DATA = d; if (activePage === "bpop") renderBpop(); })
   .catch(function(){});
-fetch("seed_history.json")
+fetch("data/seed_history.json")  /* one table across every season, not per season */
   .then(function(r){ return r.json(); })
-  .then(function(d){ SEED_HISTORY = d; })
+  .then(function(d){ SEED_HISTORY = d; if (activePage === "seedHistory") renderSeedHistory(); })
   .catch(function(){});
-fetch("timeout_efficiency.json")
+fetch(dataUrl("timeout_efficiency.json"))
   .then(function(r){ return r.json(); })
   .then(function(d){ TIMEOUT_DATA = d; if (activePage === "timeoutAnalysis") renderTimeoutAnalysis(); })
   .catch(function(){});
@@ -1989,35 +2197,57 @@ function tryRenderActivePage() {
   if (activePage === "boxScore" && bsCurrentGameId) { renderBoxScore(bsCurrentGameId); }
   if (activePage === "gamePreview" && gpCurrentMatchup) { renderGamePreview(); }
   if (activePage === "gameResults") { if (_gameResultsInited) { initGameDates(); renderGameDate(); } else { _gameResultsInited = true; initGameResultsPanel(); } }
+  if (["rank","quad","advOff","advDef","bubble"].indexOf(activePage) >= 0) { render(); }
   if (activePage === "brack") { renderBracket(); }
   if (activePage === "seedOdds") { renderSeedOdds(); }
+  if (activePage === "preseason") { renderPreseason(); }
+  if (activePage === "prePlayers") { renderPrePlayers(); }
+  if (activePage === "players" && !PLAYERS_DATA.length) { renderPlayers(); }
   if (activePage === "sheets") { renderTeamSheets(); }
   if (activePage === "compare") { renderCompareTable(); }
   if (activePage === "confRatings") { renderConfPower(); }
-  if (activePage === "confDetail" && confDetailName) { renderConfDetail(); }
+  if (activePage === "confDetail") { renderConfDetail(); }
   if (activePage === "timeoutAnalysis") { renderTimeoutAnalysis(); }
   if (activePage === "bpop") { renderBpop(); }
+  if (activePage === "predTracker") { renderPredTracker(); }
 }
 
-fetch("data.json")
+fetch(dataUrl("data.json"))
   .then(function(r){ return r.json(); })
   .then(function(d){
     DATA = d;
+    DATA_LOADED = true;
     if (["rank","quad","advOff","advDef","bubble"].indexOf(activePage) >= 0) {
       buildHeader(); render();
     }
     buildConfPower();
     tryRenderDashboard();
     tryRenderActivePage();
-  });
+  })
+  .catch(function(){ DATA_LOADED = true; tryRenderDashboard(); });
 
-fetch("sim_results.json")
+fetch(dataUrl("sim_results.json"))
   .then(function(r){ return r.json(); })
   .then(function(d){ SIM = {}; d.forEach(function(t){ t.seed_11_plus = (t.seed_11_pct||0)+(t.seed_12_pct||0)+(t.seed_13_pct||0)+(t.seed_14_pct||0)+(t.seed_15_pct||0)+(t.seed_16_pct||0); SIM[t.team_abbr] = t; }); tryRenderDashboard(); })
   .catch(function(){});
 
-fetch("games.json")
-  .then(function(r){ return r.json(); })
+/* games.min.json: games.json column-oriented ({cols, teams: {abbr: [[...]]}},
+   compact_games_json.py) -- a quarter of the size to download and parse.
+   Expanded here to the same per-team lists of objects. */
+fetch(dataUrl("games.min.json"))
+  .then(function(r){ if (!r.ok) throw new Error(); return r.json(); })
+  .then(function(c){
+    var out = {};
+    Object.keys(c.teams).forEach(function(abbr) {
+      out[abbr] = c.teams[abbr].map(function(row) {
+        var g = {};
+        for (var i = 0; i < c.cols.length; i++) g[c.cols[i]] = row[i];
+        return g;
+      });
+    });
+    return out;
+  })
+  .catch(function(){ return fetch(dataUrl("games.json")).then(function(r){ return r.json(); }); })
   .then(function(d){
     if (Array.isArray(d)) {
       var map = {};
@@ -2037,12 +2267,13 @@ fetch("games.json")
       });
       GAMES_DATA = d;
     }
+    GAMES_LOADED = true;
     tryRenderDashboard();
     tryRenderActivePage();
   })
-  .catch(function(){});
+  .catch(function(){ GAMES_LOADED = true; tryRenderDashboard(); });
 
-fetch("net_rankings.json")
+fetch(dataUrl("net_rankings.json"))
   .then(function(r){ return r.json(); })
   .then(function(d){
     if (Array.isArray(d)) { d.forEach(function(t){ NET_RANKS[t.team_abbr] = t.NET; }); }
@@ -2050,7 +2281,7 @@ fetch("net_rankings.json")
   })
   .catch(function(){});
 
-fetch("teamsheets.json")
+fetch(dataUrl("teamsheets.json"))
   .then(function(r){ return r.json(); })
   .then(function(d){
     if (Array.isArray(d)) { SHEETS_DATA = d; }
@@ -2061,20 +2292,22 @@ fetch("teamsheets.json")
         return obj;
       });
     }
+    SHEETS_LOADED = true;
     tryRenderActivePage();
   })
-  .catch(function(){});
+  .catch(function(){ SHEETS_LOADED = true; if (activePage === "sheets") renderTeamSheets(); });
 
-fetch("players.json")
+fetch(dataUrl("players.json"))
   .then(function(r){ return r.json(); })
-  .then(function(d){ PLAYERS_DATA = d; if (activePage === "players") renderPlayers(); tryRenderDashboard(); tryRenderActivePage(); })
-  .catch(function(){});
+  .then(function(d){ PLAYERS_DATA = d; PLAYERS_LOADED = true; if (activePage === "players") renderPlayers(); tryRenderDashboard(); tryRenderActivePage(); })
+  .catch(function(){ PLAYERS_LOADED = true; tryRenderDashboard(); });
 
 /* Game Results panel data */
 var SCHED_BY_DATE = {};
 var ALL_GAME_DATES = [];
 var GAME_TEAM_LOOKUP = {};
 var gameCurrentDate = "";
+var gameRequestedDate = "";  /* #gameResults&date=YYYY-MM-DD (old game_date.html links) */
 var gameActiveTab = "daily";
 var gameSortCol = "ball_score";
 var gameSortAsc = false;
@@ -2086,7 +2319,43 @@ var GAME_HOME_ADV = 3.0;
 var GAME_AVG_POSS = 68.9;
 var GAME_SCORE_SCALE = 1.10;
 
-fetch("schedule.json")
+/* Game predictions for every remaining game (predictions.json, rebuilt daily by
+   build_predictions.py from the current ratings -- or the preseason projection
+   before a team has played). Keyed by game_id, which schedule.json rows carry. */
+var PREDICTIONS = {}, PRED_META = null;
+fetch(dataUrl("predictions.json"))
+  .then(function(r){ return r.ok ? r.json() : null; })
+  .then(function(d){
+    if (!d) return;
+    PRED_META = d.meta;
+    d.games.forEach(function(g){ PREDICTIONS[g.game_id] = g; });
+    if (typeof tryRenderDashboard === "function") tryRenderDashboard();
+    if (typeof tryRenderActivePage === "function") tryRenderActivePage();
+  })
+  .catch(function(){});
+
+/* A game's prediction from `abbr`'s side: {pts, oppPts, win}, or null. */
+function predictionFor(gameId, abbr) {
+  var p = PREDICTIONS[gameId];
+  if (!p || p.home_pts == null) return null;
+  var home = p.home === abbr;
+  return { pts: home ? p.home_pts : p.away_pts, oppPts: home ? p.away_pts : p.home_pts,
+           win: home ? p.home_win : 1 - p.home_win };
+}
+
+/* "Maryland 89 - 64 (98%)" -- favorite, rounded score, favorite's win chance. */
+function predictionText(gameId, aAbbr, aName, bName) {
+  var p = predictionFor(gameId, aAbbr);
+  if (!p) return null;
+  var a = Math.round(p.pts), b = Math.round(p.oppPts);
+  if (a === b) { if (p.pts >= p.oppPts) a += 1; else b += 1; }
+  var aFav = a > b;
+  return { text: (aFav ? aName : bName) + " " + Math.max(a, b) + " - " + Math.min(a, b) +
+                 " (" + Math.round(100 * (aFav ? p.win : 1 - p.win)) + "%)",
+           margin: p.pts - p.oppPts, win: p.win };
+}
+
+fetch(dataUrl("schedule.json"))
   .then(function(r){ return r.json(); })
   .then(function(scheduleData){
     SCHEDULE_RAW = scheduleData;
@@ -2240,6 +2509,43 @@ function buildQuadTip(abbr, quad, useNet) {
 /* ================================================================
    RENDER MAIN TABLE (TEAM RATINGS)
    ================================================================ */
+/* Bubble Watch before the first game: no resumes yet, so the projected
+   bubble from the preseason ratings -- the last at-large lines plus the
+   first/next four out. Replaces the resume table until games are played. */
+function renderPreseasonBubble(q) {
+  var teams = PRESEASON.teams.filter(function(t) {
+    return (t.bracket === "at-large" && t.seed_line >= 9) || t.bracket === "first_four_out" || t.bracket === "next_four_out";
+  });
+  if (q) teams = PRESEASON.teams.filter(function(t) {
+    return (t.team || "").toLowerCase().indexOf(q) >= 0 || (t.conference || "").toLowerCase().indexOf(q) >= 0;
+  });
+  teams.sort(function(a, b) { return a.rank - b.rank; });
+  var status = function(t) {
+    if (t.bracket === "first_four_out") return '<span style="color:var(--red)">First Four Out</span>';
+    if (t.bracket === "next_four_out") return '<span style="color:var(--text-dim)">Next Four Out</span>';
+    if (t.bracket === "at-large" || t.bracket === "auto")
+      return '<span style="color:var(--green)">' + t.seed_line + ' seed' + (t.playin ? ' (play-in)' : '') + '</span>' +
+             (t.bracket === "auto" ? ' <span class="conf-badge muted">auto bid</span>' : '');
+    return '<span style="color:var(--text-dim)">\u2013</span>';
+  };
+  document.getElementById("sectionRow").innerHTML = "";
+  document.getElementById("headerRow").innerHTML = ["Proj Rank", "Team", "Conf", "Proj AdjE", "Proj Adj OE", "Proj Adj DE", "Projected Status"]
+    .map(function(h, i) { return '<th style="text-align:' + (i === 1 || i === 6 ? "left" : "center") + '">' + h + '</th>'; }).join("");
+  var tbody = document.getElementById("tbody");
+  tbody.innerHTML = teams.map(function(t) {
+    var logo = ppLogoImg(t.team_abbr, 18);
+    return '<tr><td style="text-align:center">' + t.rank + '</td>' +
+      '<td class="team-cell sticky-col" style="text-align:left"><a href="javascript:void(0)" onclick="goToTeamPage(\'' + t.team_abbr.replace(/'/g, "\\'") + '\')">' +
+        (logo ? logo + ' ' : '') + t.team + '</a> ' + preTeamBadge(t) + '</td>' +
+      '<td style="text-align:center">' + (t.conference || "") + '</td>' +
+      '<td style="text-align:center">' + preSigned(t.net, 1) + '</td>' +
+      '<td style="text-align:center">' + preNum(t.off, 1) + '</td><td style="text-align:center">' + preNum(t.def, 1) + '</td>' +
+      '<td style="text-align:left">' + status(t) + '</td></tr>';
+  }).join("") + '<tr><td colspan="7" style="color:var(--text-dim);padding:10px;text-align:left">Projected from the preseason ratings \u2014 ' +
+    'Bubble Watch switches to real resumes (records, quadrants, WAB) once games are played.</td></tr>';
+  document.getElementById("rowCount").textContent = teams.length + " teams";
+}
+
 function render() {
   if (!DATA.length) return;
   var cols = getCols();
@@ -2280,11 +2586,11 @@ function render() {
     return sortAsc ? (va > vb ? 1 : va < vb ? -1 : 0) : (va < vb ? 1 : va > vb ? -1 : 0);
   });
 
-  /* Bubble Watch: filter to SLCT ranks 37-58 (bubble range) */
+  /* Bubble Watch: filter to SLCT ranks 37-58 (bubble range; 45-66 for the 76-team field) */
   if (activeTab === "bubble" && !q) {
     rows = rows.filter(function(r) {
       var slct = r.rank_slct;
-      return slct != null && slct >= 37 && slct <= 58;
+      return slct != null && slct >= 37 + bubbleShift() && slct <= 58 + bubbleShift();
     });
   }
   var heatBounds = {};
@@ -2342,6 +2648,7 @@ function render() {
   });
   tbody.innerHTML = frags.join("");
   document.getElementById("rowCount").textContent = rows.length + " teams";
+  if (activeTab === "bubble" && isPreseason()) renderPreseasonBubble(q);
   document.getElementById("mainTable").classList.toggle("adv-mode", activeTab === "advOff" || activeTab === "advDef");
 }
 
@@ -2378,7 +2685,22 @@ function outHeat(v) {
 }
 
 function renderSeedOdds() {
-  if (!Object.keys(SIM).length) return;
+  if (!Object.keys(SIM).length) {
+    /* Seed Odds is a Monte-Carlo simulation of REMAINING games -- it only
+       means something for a season in progress: before the first game
+       there's nothing to simulate yet, and for a finished season the
+       actual result is already known. */
+    document.getElementById("seedOddsHeader").innerHTML = "";
+    document.getElementById("seedOddsTbody").innerHTML =
+      '<tr><td style="text-align:center;padding:40px;color:var(--text-dim)">' +
+      (isPreseason() ? 'Seed odds start once games are played (they simulate the rest of the season).<br>' +
+        'Until then, see the <a href="javascript:void(0)" onclick="switchPage(\'brack\')" style="color:var(--accent)">preseason bracket</a>.' :
+      'This season is complete, so there’s nothing left to simulate.<br>' +
+      'See the final results in <a href="javascript:void(0)" onclick="switchPage(\'brack\')" style="color:var(--accent)">Bracketology</a>.') +
+      '</td></tr>';
+    document.getElementById("seedOddsCount").textContent = "";
+    return;
+  }
   var dataLookup = {};
   DATA.forEach(function(t){ dataLookup[t.team_abbr] = t; });
   var rows = Object.values(SIM).map(function(t) {
@@ -2483,7 +2805,20 @@ function sheetsRankHeat(rank, maxRank) {
 }
 
 function renderTeamSheets() {
-  if (!SHEETS_DATA.length) return;
+  if (!SHEETS_DATA.length) {
+    if (SHEETS_LOADED) {
+      /* no team sheet for this season: NCAA team-sheet metrics are only
+         published once games are played, and weren't archived before 2023-24 */
+      document.getElementById("sheetsSectionRow").innerHTML = "";
+      document.getElementById("sheetsHeader").innerHTML = "";
+      document.getElementById("sheetsCount").textContent = "";
+      document.getElementById("sheetsTbody").innerHTML = '<tr><td style="text-align:center;padding:40px;color:var(--text-dim)">' +
+        (isPreseason() ? "Team sheet rankings (NET, KPI, SOR, BPI, KenPom, ...) start once games are played. Until then, see the " +
+                         "<a href=\"javascript:void(0)\" onclick=\"switchPage('preseason')\" style=\"color:var(--accent)\">preseason projections</a>."
+                       : "Team sheet rankings aren\u2019t available for this season.") + '</td></tr>';
+    }
+    return;
+  }
   var dataLookup = {};
   DATA.forEach(function(t){ dataLookup[t.team_abbr] = t; });
   SHEETS_DATA.forEach(function(s) {
@@ -2512,7 +2847,7 @@ function renderTeamSheets() {
   var prTh = document.createElement("th"); prTh.setAttribute("colspan", "4"); sectionStyle(prTh, "Predictive"); sectionRow.appendChild(prTh);
   var allCols = [
     { key: "_rank", label: "#", sortKey: "NET" }, { key: "team_displayName", label: "Team" }, { key: "conference", label: "Conf" },
-    { key: "proj_seed", label: "AIB Proj Seed" }, { key: "NET", label: "NET" }
+    { key: "proj_seed", label: "Proj Seed" }, { key: "NET", label: "NET" }
   ].concat(RES_COLS).concat([{ key: "_resAvg", label: "Res Avg", sectionEnd: true }])
    .concat(PRED_COLS).concat([{ key: "_predAvg", label: "Pred Avg", sectionEnd: true }]);
   var headerRow = document.getElementById("sheetsHeader"); headerRow.innerHTML = "";
@@ -2560,51 +2895,157 @@ function renderTeamSheets() {
 /* ================================================================
    BRACKET GRID
    ================================================================ */
+/* True for a season with no results yet (preseason): ratings, seeds and
+   resumes don't exist, so pages fall back to the preseason projection. */
+function isPreseason() {
+  return !!PRESEASON && !DATA.some(function(t){ return t.net_srs != null; });
+}
+
+/* Preseason teams in the same shape the bracket/bubble code reads from DATA. */
+function preseasonBracketTeams() {
+  return PRESEASON.teams.map(function(t) {
+    return { team_abbr: t.team_abbr, team_displayName: t.team, bracket: t.bracket, rank_seed: t.seed_order,
+             slct: t.net, seed: t.rank, record: "", conference: t.conference,
+             proj_seed: t.seed_line, playin: t.playin, playin_opp: t.playin_opp };
+  });
+}
+
+/* Play-in pairs for the field (sorted best to worst). Uses the pairs the
+   build wrote (playin / playin_opp); seasons built before those fields
+   existed derive them the same way bracket_format.py does: the lowest
+   AQs and lowest at-large teams, paired consecutively in S-curve order. */
+function bracketPlayins(field) {
+  var fmt = bracketFormat();
+  var byAbbr = {};
+  field.forEach(function(t){ byAbbr[t.team_abbr] = t; });
+  var pairs = { aq: [], al: [] };
+  if (field.some(function(t){ return t.playin !== undefined; })) {
+    field.forEach(function(t) {
+      if (t.playin && byAbbr[t.playin_opp] && (byAbbr[t.playin_opp].rank_seed || 999) > (t.rank_seed || 999))
+        pairs[t.playin].push([t, byAbbr[t.playin_opp]]);
+    });
+    return pairs;
+  }
+  [["aq", field.filter(function(t){ return t.bracket === "auto"; }), fmt.aqPlayinGames],
+   ["al", field.filter(function(t){ return t.bracket === "at-large"; }), fmt.alPlayinGames]].forEach(function(g) {
+    var low = g[1].slice(Math.max(0, g[1].length - 2 * g[2]));
+    for (var i = 0; i + 1 < low.length; i += 2) pairs[g[0]].push([low[i], low[i + 1]]);
+  });
+  return pairs;
+}
+
+/* In season, data.json carries two brackets (build_site.py): the projected
+   Selection Sunday one (main fields: résumé so far + expected results of the
+   remaining schedule) and today_* (if the season ended today). */
+var bracketMode = "proj";
+try { bracketMode = localStorage.getItem("cbb_bracket_mode") || "proj"; } catch (e) {}
+function bracketView(mode) {
+  return DATA.map(function(t) {
+    if (mode === "today" && t.today_bracket !== undefined)
+      return Object.assign({}, t, { bracket: t.today_bracket, proj_seed: t.today_proj_seed, playin: t.today_playin,
+                                    playin_opp: t.today_playin_opp, slct: t.today_slct, rank_slct: t.today_rank_slct });
+    return Object.assign({}, t, { rank_seed: t.proj_rank_seed != null ? t.proj_rank_seed : t.rank_seed,
+                                  seed: t.proj_seed_score != null ? t.proj_seed_score : t.seed });
+  });
+}
 function renderBracket() {
-  var teams = DATA.filter(function(r){ return r.bracket === "auto" || r.bracket === "at-large"; }).sort(function(a, b){ return (a.rank_seed || 999) - (b.rank_seed || 999); });
-  var columns = [
-    { label: "1 \u2013 4 Seeds", groups: [{seed:1,n:4},{seed:2,n:4},{seed:3,n:4},{seed:4,n:4}] },
-    { label: "5 \u2013 8 Seeds", groups: [{seed:5,n:4},{seed:6,n:4},{seed:7,n:4},{seed:8,n:4}] },
-    { label: "9 \u2013 12 Seeds", groups: [{seed:9,n:4},{seed:10,n:4},{seed:11,n:6},{seed:12,n:4}] },
-    { label: "13 \u2013 16 Seeds", groups: [{seed:13,n:4},{seed:14,n:4},{seed:15,n:4},{seed:16,n:6}] }
-  ];
-  var atLargeTeams = teams.filter(function(t){ return t.bracket === "at-large"; }).sort(function(a, b){ return (a.slct || 0) - (b.slct || 0); });
-  var lastFourAbbrs = {};
-  atLargeTeams.slice(0, 4).forEach(function(t){ lastFourAbbrs[t.team_abbr] = true; });
-  function teamRow(t, idx) {
-    var rank = idx + 1;
+  var pre = isPreseason();
+  var hasTwo = !pre && DATA.some(function(t){ return t.today_bracket !== undefined; });
+  var bar = document.getElementById("bracketModeBar");
+  bar.style.display = hasTwo ? "flex" : "none";
+  bar.querySelectorAll(".bk-mode").forEach(function(b) {
+    b.classList.toggle("active", b.dataset.mode === bracketMode);
+    b.onclick = function() {
+      bracketMode = b.dataset.mode;
+      try { localStorage.setItem("cbb_bracket_mode", bracketMode); } catch (e) {}
+      renderBracket();
+    };
+  });
+  var SRC = pre ? preseasonBracketTeams() : hasTwo ? bracketView(bracketMode) : DATA;
+  var statA = pre ? function(t){ return preSigned(t.slct, 1); } : function(t){ return t.slct != null ? t.slct.toFixed(2) : "–"; };
+  var statB = pre ? function(t){ return t.seed != null ? "#" + t.seed : "–"; } : function(t){ return t.seed != null ? t.seed.toFixed(2) : "–"; };
+  var hdr = pre ? '<span><span>NET</span><span>RK</span></span>' : '<span><span>SLCT</span><span>SEED</span></span>';
+  var note = document.getElementById("bracketNote");
+  if (pre) {
+    note.style.display = "";
+    note.innerHTML = '<strong>Preseason projection.</strong> With no games played there’s no resume yet, so this field is built from projected strength alone: ' +
+      'each conference’s top projected team takes its automatic bid (AQ), the best remaining teams by projected Net fill the at-large spots (AL), and all ' + bracketFormat().field + ' are seeded by projected Net. ' +
+      'Teams without an updated roster or a projection aren’t eligible. NET = projected Net efficiency, RK = preseason rank. ' +
+      'Once games are played, the bracket switches to the resume-based model.';
+  } else if (hasTwo) {
+    var left = DATA.reduce(function(m, t){ return Math.max(m, t.proj_games_left || 0); }, 0);
+    note.style.display = "";
+    note.innerHTML = bracketMode === "proj"
+      ? '<strong>Projected Selection Sunday.</strong> Each team\u2019s resume so far plus the expected result of every remaining regular-season game ' +
+        '(from our game predictions), run through the same selection and seeding model' +
+        (left ? ' \u2014 about ' + left + ' games left for the busiest teams. It moves a little with every result; by Selection Sunday it is the real resume.' : '.') +
+        ' In backtests (2023-24 to 2025-26) it picked more of the eventual field in December and January than the resume as it stands, and seeded it better all season.'
+      : '<strong>If the season ended today.</strong> The resume as it stands right now. Early in the season a couple of results can swing it a lot.';
+  } else {
+    note.style.display = "none";
+  }
+  var teams = SRC.filter(function(r){ return r.bracket === "auto" || r.bracket === "at-large"; }).sort(function(a, b){ return (a.rank_seed || 999) - (b.rank_seed || 999); });
+  var fmt = bracketFormat();
+  var playins = bracketPlayins(teams);
+  var piOpp = {};
+  ["aq", "al"].forEach(function(k) {
+    playins[k].forEach(function(p){ piOpp[p[0].team_abbr] = p[1]; piOpp[p[1].team_abbr] = p[0]; });
+  });
+  var sCurve = {};
+  teams.forEach(function(t, i){ sCurve[t.team_abbr] = i + 1; });
+  var teamName = function(t){ return _logoMap[t.team_abbr] || t.team_displayName; };
+  function teamLink(t) {
+    return '<a href="javascript:void(0)" onclick="goToTeamPage(\'' + t.team_abbr.replace(/'/g, "\\'") + '\')">' + ppLogoImg(t.team_abbr, 18) + ' ' + teamName(t) + '</a>';
+  }
+  function teamRow(t) {
     var bidCls = t.bracket === "auto" ? "auto" : "at-large";
     var bidLabel = t.bracket === "auto" ? "AQ" : "AL";
-    var isL4 = lastFourAbbrs[t.team_abbr];
-    var l4Badge = isL4 ? ' <span class="l4-badge">L4</span>' : '';
-    var shortName = _logoMap[t.team_abbr] || t.team_displayName;
-    var link = '<a href="javascript:void(0)" onclick="goToTeamPage(\'' + t.team_abbr.replace(/'/g, "\\'") + '\')">'+ppLogoImg(t.team_abbr,18)+' ' + shortName + '</a>';
-    return '<div class="bracket-row"><span class="bracket-seed">' + rank + '</span><span class="bracket-team">' + link + l4Badge + '</span><span class="bracket-bid ' + bidCls + '">' + bidLabel + '</span><span class="bracket-stat">' + (t.slct != null ? t.slct.toFixed(2) : "\u2013") + '</span><span class="bracket-stat">' + (t.seed != null ? t.seed.toFixed(2) : "\u2013") + '</span></div>';
+    var opp = piOpp[t.team_abbr];
+    var piBadge = opp ? ' <span class="pi-badge" title="' + fmt.playinName + ' vs ' + teamName(opp).replace(/"/g, "&quot;") + '">PI</span>' : '';
+    return '<div class="bracket-row"><span class="bracket-seed">' + sCurve[t.team_abbr] + '</span><span class="bracket-team">' + teamLink(t) + piBadge + '</span><span class="bracket-bid ' + bidCls + '">' + bidLabel + '</span><span class="bracket-stat">' + statA(t) + '</span><span class="bracket-stat">' + statB(t) + '</span></div>';
   }
+  /* Group by each team's projected seed line (play-in pairs share a line,
+     so lines can hold more than 4 teams: 6 on the 11 and 16 lines for 68,
+     more for 76). Fallback for rows without a seed line: S-curve, 4 a line. */
+  var byLine = {};
+  teams.forEach(function(t, i) {
+    var line = Number(t.proj_seed) || Math.min(16, Math.floor(i / 4) + 1);
+    (byLine[line] = byLine[line] || []).push(t);
+  });
   var grid = document.getElementById("bracketGrid");
-  var pos = 0;
-  grid.innerHTML = columns.map(function(col) {
-    var groupsHtml = col.groups.map(function(g) {
-      var block = teams.slice(pos, pos + g.n);
-      var rows = block.map(function(t, j){ return teamRow(t, pos + j); }).join("");
-      pos += g.n;
-      return '<div class="seed-group"><div class="seed-group-label">' + g.seed + ' seed</div><div class="seed-group-teams">' + rows + '</div></div>';
-    }).join("");
-    return '<div class="bracket-col"><div class="bracket-col-header"><span>' + col.label + '</span><span><span>SLCT</span><span>SEED</span></span></div>' + groupsHtml + '</div>';
+  grid.innerHTML = [[1, 4], [5, 8], [9, 12], [13, 16]].map(function(r) {
+    var groupsHtml = "";
+    for (var line = r[0]; line <= r[1]; line++) {
+      var block = byLine[line] || [];
+      groupsHtml += '<div class="seed-group"><div class="seed-group-label">' + line + ' seed</div><div class="seed-group-teams">' + block.map(teamRow).join("") + '</div></div>';
+    }
+    return '<div class="bracket-col"><div class="bracket-col-header"><span>' + r[0] + ' \u2013 ' + r[1] + ' Seeds</span>' + hdr + '</div>' + groupsHtml + '</div>';
   }).join("");
-  var first4 = DATA.filter(function(r){ return r.bracket === "first_four_out"; }).sort(function(a, b){ return (b.slct || 0) - (a.slct || 0); });
-  var next4 = DATA.filter(function(r){ return r.bracket === "next_four_out"; }).sort(function(a, b){ return (b.slct || 0) - (a.slct || 0); });
+  /* Play-in games: lowest AQs and lowest at-large teams; winners join the 64 */
+  function gameRow(p) {
+    return '<div class="playin-game">' + teamLink(p[0]) + '<span class="vs">vs</span>' + teamLink(p[1]) +
+           '<span class="pi-seed">' + (Number(p[0].proj_seed) ? p[0].proj_seed + ' seed' : '') + '</span></div>';
+  }
+  var nGames = playins.aq.length + playins.al.length;
+  document.getElementById("playinSection").innerHTML = nGames ? [
+    { label: fmt.playinName + ": At-Large (" + playins.al.length + " games)", games: playins.al },
+    { label: fmt.playinName + ": Automatic Qualifiers (" + playins.aq.length + " games)", games: playins.aq }
+  ].map(function(b) {
+    return '<div class="bubble-box"><div class="bubble-header playin"><span>' + b.label + '</span></div>' + b.games.map(gameRow).join("") + '</div>';
+  }).join("") : "";
+  var first4 = SRC.filter(function(r){ return r.bracket === "first_four_out"; }).sort(function(a, b){ return (b.slct || 0) - (a.slct || 0); });
+  var next4 = SRC.filter(function(r){ return r.bracket === "next_four_out"; }).sort(function(a, b){ return (b.slct || 0) - (a.slct || 0); });
   function bubbleRow(t) {
     var shortName = _logoMap[t.team_abbr] || t.team_displayName;
     var link = '<a href="javascript:void(0)" onclick="goToTeamPage(\'' + t.team_abbr.replace(/'/g, "\\'") + '\')">'+ppLogoImg(t.team_abbr,18)+' ' + shortName + '</a>';
-    return '<div class="bracket-row"><span class="bracket-team">' + link + '</span><span class="bracket-stat">' + (t.slct != null ? t.slct.toFixed(2) : "\u2013") + '</span><span class="bracket-stat">' + (t.seed != null ? t.seed.toFixed(2) : "\u2013") + '</span></div>';
+    return '<div class="bracket-row"><span class="bracket-team">' + link + '</span><span class="bracket-stat">' + statA(t) + '</span><span class="bracket-stat">' + statB(t) + '</span></div>';
   }
   var bubbles = [
     { teams: first4, label: "First Four Out", cls: "first-out" },
     { teams: next4, label: "Next Four Out", cls: "next-out" }
   ];
   document.getElementById("bubbleSection").innerHTML = bubbles.map(function(b) {
-    return '<div class="bubble-box"><div class="bubble-header ' + b.cls + '"><span>' + b.label + '</span><span><span>SLCT</span><span>SEED</span></span></div>' + b.teams.map(function(t){ return bubbleRow(t); }).join("") + '</div>';
+    return '<div class="bubble-box"><div class="bubble-header ' + b.cls + '"><span>' + b.label + '</span>' + hdr + '</div>' + b.teams.map(function(t){ return bubbleRow(t); }).join("") + '</div>';
   }).join("");
 }
 
@@ -2668,15 +3109,18 @@ function buildCurrentTeamAsHistoryRow(abbr) {
   var q1aw = 0, q1al = 0;
   games.forEach(function(g) {
     var netRank = NET_RANKS[g.opp_team_abbr];
-    if (typeof getOfficialQuad === "function") {
+    if (netRank != null) {
       var q = getOfficialQuad(g.homeAway, netRank);
       if (q == null) return;
       if (g._won) qw[q]++; else ql[q]++;
       if (isQ1A(g.homeAway, netRank)) { if (g._won) q1aw++; else q1al++; }
     } else {
+      /* No live NET rankings for this season -- fall back to our own
+         SEED-rank-based quad (always populated by build_site.py). */
       var q2 = g.quad;
       if (q2 == null) return;
       if (g._won) qw[q2]++; else ql[q2]++;
+      if (isQ1A(g.homeAway, g.opp_seed_rank)) { if (g._won) q1aw++; else q1al++; }
     }
   });
 
@@ -2938,7 +3382,7 @@ var COMPARE_COLS = [
 var COMPARE_SHEETS_COLS = [
   { key: "team_displayName", label: "Team", align: "left", link: true },
   { key: "conference", label: "Conf", align: "left" },
-  { key: "net_srs", label: "AIB AdjE", align: "center", fmt: function(v){ return v != null ? (v >= 0 ? "+" : "") + v.toFixed(2) : "\u2013"; }, cls: function(v){ return v > 0 ? "net-pos" : v < 0 ? "net-neg" : ""; }, best: "high", sort: "high" },
+  { key: "net_srs", label: "AdjE", align: "center", fmt: function(v){ return v != null ? (v >= 0 ? "+" : "") + v.toFixed(2) : "\u2013"; }, cls: function(v){ return v > 0 ? "net-pos" : v < 0 ? "net-neg" : ""; }, best: "high", sort: "high" },
   { key: "_NET", label: "NET", align: "center", sheet: true, best: "low", sectionStart: true, sort: "low" },
   { key: "_SOS", label: "SOS", align: "center", sheet: true, best: "low", sort: "low" },
   { key: "_NC_SOS", label: "NC SOS", align: "center", sheet: true, best: "low", sectionEnd: true, sort: "low" },
@@ -3253,7 +3697,16 @@ function initConfDetailDropdown() {
 }
 
 function renderConfDetail() {
-  if (!DATA.length || !confDetailName) return;
+  if (!DATA.length) return;
+  if (!confDetailName) {
+    /* no conference picked (direct link / data not loaded at page switch):
+       default to the highest-rated one */
+    var byConf = {};
+    DATA.forEach(function(t) { if (t.conference) (byConf[t.conference] = byConf[t.conference] || []).push(t.net_srs || 0); });
+    var avg = function(a) { return a.reduce(function(s, x) { return s + x; }, 0) / a.length; };
+    confDetailName = Object.keys(byConf).sort(function(a, b) { return avg(byConf[b]) - avg(byConf[a]); })[0];
+    if (!confDetailName) return;
+  }
   document.getElementById("confSubPower").style.display = "none";
   document.getElementById("confSubDetail").style.display = "block";
   document.getElementById("pageTitle").textContent = confDetailName + " Conference";
@@ -3454,7 +3907,19 @@ var PLAYER_COLS_ADV = [
 var playerStatsMode = "basic";
 function getPlayerCols() { return PLAYER_COLS_COMMON.concat(playerStatsMode === "advanced" ? PLAYER_COLS_ADV : PLAYER_COLS_BASIC); }
 function renderPlayers() {
-  if (!PLAYERS_DATA.length) return;
+  if (!PLAYERS_DATA.length) {
+    if (PRESEASON) {
+      document.getElementById("playerHeader").innerHTML = "";
+      document.getElementById("playerTbody").innerHTML = '<tr><td style="text-align:center;padding:40px;color:var(--text-dim)">' +
+        'Player ratings start once games are played. Until then, see the ' +
+        '<a href="javascript:void(0)" onclick="switchPage(\'prePlayers\')" style="color:var(--accent)">preseason player projections</a>.</td></tr>';
+    } else if (PLAYERS_LOADED) {
+      document.getElementById("playerHeader").innerHTML = "";
+      document.getElementById("playerTbody").innerHTML = '<tr><td style="text-align:center;padding:40px;color:var(--text-dim)">' +
+        'Player ratings aren\u2019t available for this season (they need lineup data, which starts in 2023-24).</td></tr>';
+    }
+    return;
+  }
 
   /* build conference lookup from DATA */
   var confLookup = {};
@@ -3479,6 +3944,12 @@ function renderPlayers() {
   rows.forEach(function(r){ r._conf = confLookup[r.team] || ""; });
   /* min possessions filter */
   var minPossEl = document.getElementById("playerMinPoss");
+  if (minPossEl && !minPossEl._userSet) {
+    /* default: 800 once the season is well along; early on, a third of
+       the leader's possessions (800 = ~35% of a full-season leader's) */
+    var maxPoss = rows.reduce(function(m, r){ return Math.max(m, r.total_poss || 0); }, 0);
+    minPossEl.value = Math.min(800, Math.floor(maxPoss * 0.35 / 10) * 10);
+  }
   var minPoss = minPossEl ? parseInt(minPossEl.value) : 0;
   if (minPoss > 0) rows = rows.filter(function(r){ return (r.total_poss || 0) >= minPoss; });
 
@@ -3664,7 +4135,7 @@ function gameHeatColor(val, min, max) {
    WELCOME DASHBOARD
    ================================================================ */
 function tryRenderDashboard() {
-  if (!DATA.length || !Object.keys(GAMES_DATA).length || !PLAYERS_DATA.length) return;
+  if (!DATA_LOADED || !GAMES_LOADED || !PLAYERS_LOADED) return;
   renderWelcomeDashboard();
 }
 
@@ -3696,7 +4167,7 @@ function renderWelcomeDashboard() {
     fmtDate = yd.toLocaleDateString("en-US", { month: "short", day: "numeric" });
     var fmtFull = yd.toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" });
     var titleEl = document.getElementById("dashWelcomeTitle");
-    if (titleEl) titleEl.textContent = "Welcome to AIB College Basketball Ratings - Updated through " + fmtFull;
+    if (titleEl) titleEl.textContent = "Welcome to grantley cbb - Updated through " + fmtFull;
   }
 
   /* ── Build yesterday's game rows (deduplicated) ── */
@@ -3780,7 +4251,7 @@ function renderWelcomeDashboard() {
       var perfLoaded = 0;
       var allPerfs = [];
       yesterdayIds.forEach(function(gid) {
-        fetch("box/" + gid + ".json")
+        fetch(dataUrl("box/" + gid + ".json"))
           .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
           .then(function(bs) {
             var sides = [bs.home, bs.away];
@@ -3835,7 +4306,20 @@ function renderWelcomeDashboard() {
   /* ── 3. Top 10 Teams ── */
   var topTeams = DATA.slice().sort(function(a, b) { return (a.rank_net || 999) - (b.rank_net || 999); }).slice(0, 10);
   var ttEl = document.getElementById("dashTopTeams");
-  if (ttEl) {
+  var noRatingsYet = !DATA.some(function(t){ return t.net_srs != null; });
+  if (ttEl && noRatingsYet && PRESEASON) {
+    /* Season hasn't started: no ratings to rank yet, so show the preseason projection. */
+    var pre = PRESEASON.teams.filter(function(t){ return t.rank; }).sort(function(a, b){ return a.rank - b.rank; }).slice(0, 10);
+    var hp = '<h3>&#128202; Preseason Top 10 <a href="javascript:void(0)" onclick="switchPage(\'preseason\')" style="font-size:.7rem;font-weight:500;color:var(--accent);margin-left:6px;">all teams</a></h3>';
+    hp += '<table><thead><tr><th class="dash-rank">#</th><th>Team</th><th style="text-align:center">Proj Net</th><th style="text-align:center">Off</th><th style="text-align:center">Def</th></tr></thead><tbody>';
+    pre.forEach(function(t) {
+      hp += '<tr><td class="dash-rank">' + t.rank + '</td>';
+      hp += '<td>' + dashLogo(t.team_abbr) + '<a href="javascript:void(0)" onclick="goToTeamPage(\'' + t.team_abbr.replace(/'/g, "\\'") + '\')" style="color:var(--accent);text-decoration:none">' + t.team + '</a></td>';
+      hp += '<td style="text-align:center;font-weight:600">' + preSigned(t.net, 1) + '</td>';
+      hp += '<td style="text-align:center">' + preNum(t.off, 1) + '</td><td style="text-align:center">' + preNum(t.def, 1) + '</td></tr>';
+    });
+    ttEl.innerHTML = hp + '</tbody></table>';
+  } else if (ttEl) {
     var ht = '<h3>&#128202; Top 10 Teams</h3>';
     ht += '<table><thead><tr><th class="dash-rank">#</th><th>Team</th><th style="text-align:center">Record</th><th style="text-align:center">AdjE</th><th style="text-align:center">WAB</th></tr></thead><tbody>';
     topTeams.forEach(function(t, i) {
@@ -3854,7 +4338,29 @@ function renderWelcomeDashboard() {
   /* ── 4. Top 10 Players ── */
   var topPlayers = PLAYERS_DATA.slice().sort(function(a, b) { return (a.rapm_rank || 9999) - (b.rapm_rank || 9999); }).slice(0, 10);
   var tpEl = document.getElementById("dashTopPlayers");
-  if (tpEl) {
+  if (tpEl && !topPlayers.length && PRESEASON && PRESEASON.players) {
+    /* No games yet: preseason projections, same defaults as the Preseason
+       Projections page (normal confidence, 16+ projected mpg) */
+    var prePl = [];
+    Object.keys(PRESEASON.players).forEach(function(abbr) {
+      PRESEASON.players[abbr].forEach(function(p) {
+        if (p.rapm != null && p.confidence === "normal" && (p.share || 0) >= 0.08) prePl.push({ p: p, abbr: abbr });
+      });
+    });
+    prePl.sort(function(a, b){ return b.p.rapm - a.p.rapm; });
+    var hpp = '<h3>&#127941; Preseason Top 10 Players <a href="javascript:void(0)" onclick="switchPage(\'prePlayers\')" style="font-size:.7rem;font-weight:500;color:var(--accent);margin-left:6px;">full rankings</a></h3>';
+    hpp += '<table><thead><tr><th class="dash-rank">#</th><th>Player</th><th>Team</th><th style="text-align:center">Proj RAPM</th></tr></thead><tbody>';
+    prePl.slice(0, 10).forEach(function(x, i) {
+      var role = x.p.role === "transfer" && x.p.prior_team ? '<span style="color:var(--text-dim);font-size:.68rem"> from ' + x.p.prior_team + '</span>'
+               : x.p.role === "freshman" ? '<span style="color:var(--text-dim);font-size:.68rem"> FR</span>' : '';
+      hpp += '<tr><td class="dash-rank">' + (i + 1) + '</td><td style="white-space:nowrap">' + prePlayerLink(x.p) + role + '</td>';
+      hpp += '<td style="white-space:nowrap">' + dashLogo(x.abbr) + '<a href="javascript:void(0)" onclick="goToTeamPage(\'' + x.abbr.replace(/'/g, "\\'") + '\')" style="color:var(--accent);text-decoration:none;font-size:.76rem">' + x.abbr + '</a></td>';
+      hpp += '<td style="text-align:center;font-weight:600">' + preSigned(x.p.rapm, 2) + '</td></tr>';
+    });
+    tpEl.innerHTML = hpp + '</tbody></table>';
+  } else if (tpEl && !topPlayers.length) {
+    tpEl.innerHTML = '<h3>&#127941; Top 10 Players</h3><p class="dash-empty">Player ratings start once games are played</p>';
+  } else if (tpEl) {
     var hpl = '<h3>&#127941; Top 10 Players</h3>';
     hpl += '<table><thead><tr><th class="dash-rank">#</th><th>Player</th><th>Team</th><th style="text-align:center">RAPM</th><th style="text-align:center">ORAPM</th><th style="text-align:center">DRAPM</th></tr></thead><tbody>';
     topPlayers.forEach(function(p, i) {
@@ -3912,7 +4418,10 @@ function renderWelcomeDashboard() {
         var expectedResult = "\u2013";
         var homeOE = homeInfo.OffEff_srs, homeDE = homeInfo.DefEff_srs, homeT = homeInfo.Tempo_srs;
         var awayOE = awayInfo.OffEff_srs, awayDE = awayInfo.DefEff_srs, awayT = awayInfo.Tempo_srs;
-        if (homeOE != null && homeDE != null && awayOE != null && awayDE != null && homeT != null && awayT != null) {
+        var fPred = predictionText(fg.game_id, homeAbbr, homeName, awayName);
+        if (fPred) {
+          expectedResult = fPred.text;
+        } else if (homeOE != null && homeDE != null && awayOE != null && awayDE != null && homeT != null && awayT != null) {
           var poss = homeT * awayT / GAME_AVG_POSS;
           var adjHOE = homeOE, adjAOE = awayOE;
           if (!fg.neutralSite) { adjHOE += GAME_HOME_ADV / 2; adjAOE -= GAME_HOME_ADV / 2; }
@@ -3962,7 +4471,23 @@ function renderWelcomeDashboard() {
 
   /* ── 6. Top 16 Seeds (right sidebar) ── */
   var top16El = document.getElementById("dashTop16");
-  if (top16El) {
+  var dashTeamLink = function(abbr, name) {
+    return dashLogo(abbr) + '<a href="javascript:void(0)" onclick="goToTeamPage(\'' + abbr.replace(/'/g, "\\'") + '\')" style="color:var(--accent);text-decoration:none;font-size:.76rem">' + name + '</a>';
+  };
+  if (top16El && noRatingsYet && PRESEASON) {
+    /* No resume before games: seeds come from the preseason projection. */
+    var pre16 = PRESEASON.teams.filter(function(t){ return t.seed_order && t.seed_order <= 16; })
+      .sort(function(a, b){ return a.seed_order - b.seed_order; });
+    var hs = '<h3>&#127936; Preseason Top 16 Seeds <a href="javascript:void(0)" onclick="switchPage(\'brack\')" style="font-size:.7rem;font-weight:500;color:var(--accent);margin-left:6px;">full bracket</a></h3>';
+    hs += '<table><thead><tr><th class="dash-rank">#</th><th>Team</th><th style="text-align:center">Seed</th><th style="text-align:center">Net</th></tr></thead><tbody>';
+    pre16.forEach(function(t) {
+      hs += '<tr><td class="dash-rank">' + t.seed_order + '</td><td style="white-space:nowrap">' + dashTeamLink(t.team_abbr, t.team) +
+            '</td><td style="text-align:center">' + t.seed_line + '</td><td style="text-align:center">' + preSigned(t.net, 1) + '</td></tr>';
+    });
+    top16El.innerHTML = hs + '</tbody></table>';
+  } else if (top16El && noRatingsYet) {
+    top16El.innerHTML = '<h3>&#127936; Projected Top 16 Seeds</h3><p class="dash-empty">Seed projections start once games are played</p>';
+  } else if (top16El) {
     var top16 = DATA.slice().sort(function(a, b) { return (a.rank_seed || 999) - (b.rank_seed || 999); }).slice(0, 16);
     var h16 = '<h3>&#127936; Projected Top 16 Seeds</h3>';
     h16 += '<table><thead><tr><th class="dash-rank">#</th><th>Team</th><th style="text-align:center">Seed</th><th style="text-align:center">SLCT</th></tr></thead><tbody>';
@@ -3980,7 +4505,20 @@ function renderWelcomeDashboard() {
 
   /* ── 7. Bubble Picture (right sidebar) ── */
   var bubEl = document.getElementById("dashBubble");
-  if (bubEl) {
+  if (bubEl && noRatingsYet && PRESEASON) {
+    var preAL = PRESEASON.teams.filter(function(t){ return t.bracket === "at-large"; }).sort(function(a, b){ return a.net - b.net; }).slice(0, 4);
+    var preOut = PRESEASON.teams.filter(function(t){ return t.bracket === "first_four_out"; }).sort(function(a, b){ return b.net - a.net; });
+    var pb = '<h3>&#128680; Preseason Bubble</h3><table>';
+    var pbRows = function(list) {
+      return list.map(function(t) {
+        return '<tr><td style="white-space:nowrap">' + dashTeamLink(t.team_abbr, t.team) + '</td><td style="text-align:center;font-size:.72rem;color:var(--text-dim)">#' + t.rank +
+               '</td><td style="text-align:center">' + preSigned(t.net, 1) + '</td></tr>';
+      }).join("");
+    };
+    pb += '<tr><td colspan="3" class="dash-bubble-label dash-bubble-in">Last Four In</td></tr>' + pbRows(preAL);
+    pb += '<tr><td colspan="3" class="dash-bubble-label dash-bubble-out">First Four Out</td></tr>' + pbRows(preOut);
+    bubEl.innerHTML = pb + '</table>';
+  } else if (bubEl) {
     var atLarge = DATA.filter(function(t) { return t.bracket === "at-large"; })
       .sort(function(a, b) { return (b.rank_slct || 0) - (a.rank_slct || 0); });
     var last4In = atLarge.slice(0, 4);
@@ -4023,7 +4561,9 @@ function initGameDates() {
   Object.keys(SCHED_BY_DATE).forEach(function(d){ dateSet[d]=1; });
   ALL_GAME_DATES = Object.keys(dateSet).sort();
   var playedArr = Object.keys(playedDates).sort();
-  gameCurrentDate = playedArr[playedArr.length-1] || ALL_GAME_DATES[ALL_GAME_DATES.length-1] || "";
+  /* Latest played date; before any games, opening night (first scheduled date). */
+  gameCurrentDate = playedArr[playedArr.length-1] || ALL_GAME_DATES[0] || "";
+  if (gameRequestedDate && ALL_GAME_DATES.indexOf(gameRequestedDate) !== -1) gameCurrentDate = gameRequestedDate;
 }
 
 function buildGameRow(g) {
@@ -4048,7 +4588,7 @@ function buildGameRow(g) {
   var loseConf=loseInfo.conference||"";
   var matchupConf=(winConf&&loseConf&&winConf===loseConf)?winConf:"Non Conf";
 
-  /* Use stored proj_score from games.json if available (locked at build time) */
+  /* proj_score: the prediction locked before tip-off (build_site.py, from prediction_log.json) */
   var expectedMargin=null, expectedMarginStr="\u2013";
   if (g.proj_score) {
     var parts = g.proj_score.split(":");
@@ -4061,25 +4601,9 @@ function buildGameRow(g) {
     var pHi = Math.max(wPP, lPP), pLo = Math.min(wPP, lPP);
     var exact = (pHi === winPts && pLo === losePts && pFav === winName);
     expectedMarginStr = pFav + " " + pHi + " - " + pLo + (exact ? " \u2B50" : "");
-  } else {
-    /* Fallback: compute from current data (for games not yet rebuilt) */
-    var winOE=winInfo.OffEff_srs,winDE=winInfo.DefEff_srs,winT=winInfo.Tempo_srs;
-    var loseOE=loseInfo.OffEff_srs,loseDE=loseInfo.DefEff_srs,loseT=loseInfo.Tempo_srs;
-    if (winOE!=null&&winDE!=null&&loseOE!=null&&loseDE!=null&&winT!=null&&loseT!=null) {
-      var poss=winT*loseT/GAME_AVG_POSS;
-      var wProjOE=winOE, lProjOE=loseOE;
-      if (winLoc==="H"){wProjOE+=GAME_HOME_ADV/2;lProjOE-=GAME_HOME_ADV/2;}
-      else if (winLoc==="A"){wProjOE-=GAME_HOME_ADV/2;lProjOE+=GAME_HOME_ADV/2;}
-      var wPP2=Math.round(wProjOE*loseDE/100*poss/100*GAME_SCORE_SCALE);
-      var lPP2=Math.round(lProjOE*winDE/100*poss/100*GAME_SCORE_SCALE);
-      if(wPP2===lPP2){if(wProjOE*loseDE>=lProjOE*winDE)wPP2+=1;else lPP2+=1;}
-      expectedMargin=wPP2-lPP2;
-      var pFav2=wPP2>=lPP2?winName:loseName;
-      var pHi2=Math.max(wPP2,lPP2), pLo2=Math.min(wPP2,lPP2);
-      var exact2=(pHi2===winPts&&pLo2===losePts&&pFav2===winName);
-      expectedMarginStr=pFav2+" "+pHi2+" - "+pLo2+(exact2?" \u2B50":"");
-    }
   }
+  /* no fallback: a projection computed from today's ratings would include
+     this game's own result (only locked, pre-game predictions are shown) */
   var ballScore=(winInfo.net_srs!=null&&loseInfo.net_srs!=null)?winInfo.net_srs+loseInfo.net_srs:null;
   var actualMargin=winPts-losePts;
   var upsetScore=expectedMargin!=null?actualMargin-expectedMargin:null;
@@ -4163,7 +4687,10 @@ function renderFutureGames() {
     var expectedResult="\u2013", _expVal=null;
     var homeOE=homeInfo.OffEff_srs,homeDE=homeInfo.DefEff_srs,homeT=homeInfo.Tempo_srs;
     var awayOE=awayInfo.OffEff_srs,awayDE=awayInfo.DefEff_srs,awayT=awayInfo.Tempo_srs;
-    if(homeOE!=null&&homeDE!=null&&awayOE!=null&&awayDE!=null&&homeT!=null&&awayT!=null){
+    var gPred=predictionText(g.game_id,homeAbbr,homeName,awayName);
+    if(gPred){
+      expectedResult=gPred.text; _expVal=gPred.margin;
+    } else if(homeOE!=null&&homeDE!=null&&awayOE!=null&&awayDE!=null&&homeT!=null&&awayT!=null){
       var poss=homeT*awayT/GAME_AVG_POSS;
       var adjHOE=homeOE,adjAOE=awayOE;
       if(!g.neutralSite){adjHOE+=GAME_HOME_ADV/2;adjAOE-=GAME_HOME_ADV/2;}
@@ -4316,12 +4843,13 @@ function loadBlogPanel() {
    NAVIGATION / PAGE SWITCHING
    ================================================================ */
 var PAGE_TITLES = {
-  welcome: "Welcome", rank: "Team Efficiency Ratings", quad: "Quadrant Records",
+  welcome: "Welcome", rank: "Team Efficiency Ratings", preseason: "Preseason Projections", prePlayers: "Preseason Player Projections", quad: "Quadrant Records",
   advOff: "Advanced Offensive Stats", advDef: "Advanced Defensive Stats", bubble: "Bubble Watch",
   players: "Player Ratings (RAPM)", confRatings: "Conference Power Rankings",
   confDetail: "Conference View",
   brack: "My Bracket", seedOdds: "Seed Odds", seedHistory: "Seed History", compare: "Comparison Tool", sheets: "Teamsheet Ranks",
   gameResults: "Latest Game Results", gamePreview: "Game Preview", boxScore: "Box Score", blog: "Blog",
+  predTracker: "Prediction Tracker",
   tpOverview: "Team Page — Overview", tpRoster: "Team Page — Roster",
   tpGameLog: "Team Page — Full Game Log", tpResumeSim: "Team Page — Resume Simulator",
   tpTrends: "Team Page — Trends",
@@ -4337,6 +4865,9 @@ var PAGE_SORT_DEFAULTS = {
 };
 
 function switchPage(page) {
+  /* the Resume Simulator plays out remaining games -- nothing to simulate
+     for a finished season (anything before the current one) */
+  if (page === "tpResumeSim" && Number(getSeason()) < DEFAULT_SEASON) page = "tpOverview";
   if (activePage === page) return;
   if (typeof gtag === "function") gtag('event', 'tab_click', { event_category: 'navigation', event_label: page, page: 'rankings' });
   activePage = page;
@@ -4362,6 +4893,7 @@ function switchPage(page) {
     history.replaceState(null, "", "#" + page);
   }
   document.getElementById("pageTitle").textContent = PAGE_TITLES[page] || page;
+  updatePageSeasonControl(page);
   document.querySelectorAll(".panel").forEach(function(p){ p.classList.remove("active"); });
 
   if (["rank","quad","advOff","advDef","bubble"].indexOf(page) >= 0) {
@@ -4386,6 +4918,8 @@ function switchPage(page) {
   }
   else if (page === "brack") { document.getElementById("panelBrack").classList.add("active"); renderBracket(); }
   else if (page === "seedOdds") { document.getElementById("panelSeedOdds").classList.add("active"); renderSeedOdds(); }
+  else if (page === "preseason") { document.getElementById("panelPreseason").classList.add("active"); renderPreseason(); }
+  else if (page === "prePlayers") { document.getElementById("panelPrePlayers").classList.add("active"); renderPrePlayers(); }
   else if (page === "seedHistory") { document.getElementById("panelSeedHistory").classList.add("active"); renderSeedHistory(); }
   else if (page === "compare") { document.getElementById("panelCompare").classList.add("active"); renderCompareTags(); renderCompareTable(); }
   else if (page === "sheets") { document.getElementById("panelSheets").classList.add("active"); renderTeamSheets(); }
@@ -4403,6 +4937,7 @@ function switchPage(page) {
     renderGamePreview();
   }
   else if (page === "blog") { document.getElementById("panelBlog").classList.add("active"); loadBlogPanel(); }
+  else if (page === "predTracker") { document.getElementById("panelPredTracker").classList.add("active"); renderPredTracker(); }
   else if (page === "bpop") { document.getElementById("panelBpop").classList.add("active"); renderBpop(); }
   else if (page === "timeoutAnalysis") { document.getElementById("panelTimeoutAnalysis").classList.add("active"); renderTimeoutAnalysis(); }
   else if (page === "ppPage") {
@@ -4440,6 +4975,11 @@ function switchPage(page) {
   document.getElementById("mobileOverlay").classList.remove("show");
 }
 
+if (Number(getSeason()) < DEFAULT_SEASON) {
+  var _rsNav = document.querySelector('.nav-sub-item[data-page="tpResumeSim"]');
+  if (_rsNav) _rsNav.style.display = "none";
+}
+
 /* Sidebar click handlers */
 document.querySelectorAll(".nav-item[data-page]").forEach(function(el) { el.addEventListener("click", function() { switchPage(el.dataset.page); }); });
 document.querySelectorAll(".nav-item[data-link]").forEach(function(el) { el.addEventListener("click", function() { window.location.href = el.dataset.link; }); });
@@ -4458,14 +4998,311 @@ document.querySelectorAll(".feature-card[data-nav]").forEach(function(el) { el.a
 /* Search listeners */
 document.getElementById("search").addEventListener("input", render);
 document.getElementById("seedOddsSearch").addEventListener("input", renderSeedOdds);
+document.getElementById("preseasonSearch").addEventListener("input", renderPreseason);
+document.getElementById("preseasonHideLow").addEventListener("change", renderPreseason);
+["prePlayersSearch"].forEach(function(id){ document.getElementById(id).addEventListener("input", renderPrePlayers); });
+["prePlayersConf", "prePlayersRole", "prePlayersMinShare", "prePlayersHideLow", "prePlayersSize"].forEach(function(id){
+  document.getElementById(id).addEventListener("change", renderPrePlayers);
+});
 document.getElementById("sheetsSearch").addEventListener("input", renderTeamSheets);
 document.getElementById("playerSearch").addEventListener("input", function(){ playerCurrentPage=1; renderPlayers(); });
 document.getElementById("playerBasicBtn").addEventListener("click", function(){ playerStatsMode="basic"; this.classList.add("active"); document.getElementById("playerAdvBtn").classList.remove("active"); renderPlayers(); });
 document.getElementById("playerAdvBtn").addEventListener("click", function(){ playerStatsMode="advanced"; this.classList.add("active"); document.getElementById("playerBasicBtn").classList.remove("active"); renderPlayers(); });
 document.getElementById("playerPageSize").addEventListener("change", function(){ playerPageSize=parseInt(this.value); playerCurrentPage=1; renderPlayers(); });
-document.getElementById("playerMinPoss").addEventListener("change", function(){ playerCurrentPage=1; renderPlayers(); });
+document.getElementById("playerMinPoss").addEventListener("change", function(){ this._userSet = true; playerCurrentPage=1; renderPlayers(); });
 document.getElementById("playerTeamFilter").addEventListener("change", function(){ playerCurrentPage=1; renderPlayers(); });
 document.getElementById("playerConfFilter").addEventListener("change", function(){ playerCurrentPage=1; renderPlayers(); });
+
+/* ===== PRESEASON PROJECTIONS =====
+   docs/data/<season>/preseason.json, built by build_preseason_json.py.
+   Only exists for a season projected before games are played. */
+var PRESEASON = null;
+var preSortCol = "rank", preSortAsc = true;
+
+fetch(dataUrl("preseason.json"))
+  .then(function(r){ if (!r.ok) throw new Error(); return r.json(); })
+  .then(function(d){
+    PRESEASON = d;
+    PRESEASON.byAbbr = {};
+    d.teams.forEach(function(t){ PRESEASON.byAbbr[t.team_abbr] = t; });
+    if (activePage === "preseason") renderPreseason();
+    tryRenderDashboard();
+    tryRenderActivePage();
+  })
+  .catch(function(){ PRESEASON = null; if (activePage === "preseason") renderPreseason(); });
+
+function seasonLabel(s) { s = parseInt(s, 10); return (s - 1) + "-" + String(s).slice(-2); }
+// poss_share is a share of the team's player-possessions (5 on the floor),
+// so 0.20 = all 40 minutes
+function preMpg(share) { return share == null ? "–" : (share * 200).toFixed(1); }
+function preNum(v, d) { return v == null ? "–" : Number(v).toFixed(d); }
+function preSigned(v, d) { return v == null ? "–" : (v > 0 ? "+" : "") + Number(v).toFixed(d); }
+
+function preTeamBadge(t) {
+  if (t.roster_status === "stale") return '<span class="conf-badge muted" title="This team’s roster hasn’t been updated for the new season yet">roster not updated</span>';
+  if (t.net == null) return '<span class="conf-badge muted" title="No player on this roster has a projection method">no projection</span>';
+  if (t.confidence === "low") return '<span class="conf-badge" title="Under ' + Math.round(PRESEASON.meta.low_coverage * 100) + '% of possessions come from players we can project">low confidence</span>';
+  return "";
+}
+
+var PRE_COLS = [
+  { key: "rank", label: "Rk" },
+  { key: "team", label: "Team", align: "left" },
+  { key: "conference", label: "Conf", align: "left" },
+  { key: "net", label: "Proj Net", fmt: function(v){ return preSigned(v, 1); }, title: "Projected offensive minus defensive efficiency" },
+  { key: "off", label: "Proj Off", fmt: function(v){ return preNum(v, 1); }, title: "Points scored per 100 possessions vs an average opponent" },
+  { key: "def", label: "Proj Def", fmt: function(v){ return preNum(v, 1); }, title: "Points allowed per 100 possessions vs an average opponent (lower is better)" },
+  { key: "n_returners", label: "Ret", title: "Returners projected from last season’s RAPM" },
+  { key: "n_transfers", label: "Xfer", title: "Transfers projected from their previous school’s RAPM" },
+  { key: "n_freshmen", label: "Fr", title: "Freshmen projected from their recruiting profile" },
+  { key: "n_unprojected", label: "No Proj", title: "Players with no projection method (JUCO, international, unranked, or barely played last season)" },
+  { key: "coverage", label: "Coverage", fmt: function(v){ return v == null ? "–" : Math.round(v * 100) + "%"; }, title: "Share of last season’s possessions played by the players we can project" },
+  { key: "confidence", label: "" }
+];
+
+function renderPreseason() {
+  var note = document.getElementById("preseasonNote");
+  var thead = document.getElementById("preseasonHeader");
+  var tbody = document.getElementById("preseasonTbody");
+  var count = document.getElementById("preseasonCount");
+  if (!PRESEASON) {
+    note.innerHTML = ""; thead.innerHTML = ""; count.textContent = "";
+    tbody.innerHTML = '<tr><td style="text-align:center;padding:40px;color:var(--text-dim)">There’s no preseason projection for ' +
+      seasonLabel(getSeason()) + '. Projections are built before a season starts, from its rosters.</td></tr>';
+    return;
+  }
+  var m = PRESEASON.meta;
+  note.innerHTML =
+    'Projected efficiency for <strong>' + seasonLabel(m.season) + '</strong> in points per 100 possessions against an average opponent, built from each roster. ' +
+    'Returners use last season’s RAPM, transfers carry their RAPM from their previous school, and freshmen are projected from their recruiting profile. ' +
+    'Tested on 2025-26 using only earlier data, it ranked teams with a correlation of ' + m.backtest.net_spearman.toFixed(2) +
+    ' and missed Net efficiency by about ' + Math.round(m.backtest.net_mae) + ' points per 100 possessions on average. ' +
+    '<strong>Low confidence</strong> means under ' + Math.round(m.low_coverage * 100) + '% of a team’s possessions come from players we can project, usually because the roster is mostly JUCO, international or unranked newcomers. ' +
+    'Updated ' + m.generated + '; these give way to real results once games are played.';
+
+  var q = document.getElementById("preseasonSearch").value.toLowerCase();
+  var hideLow = document.getElementById("preseasonHideLow").checked;
+  var rows = PRESEASON.teams.filter(function(t) {
+    if (hideLow && (t.confidence === "low" || !t.rank)) return false;
+    if (!q) return true;
+    return (t.team || "").toLowerCase().indexOf(q) >= 0 || (t.team_abbr || "").toLowerCase().indexOf(q) >= 0 ||
+           (t.conference || "").toLowerCase().indexOf(q) >= 0;
+  });
+  rows.sort(function(a, b) {
+    var va = a[preSortCol], vb = b[preSortCol];
+    if (preSortCol === "team" || preSortCol === "conference") { va = (va || "").toLowerCase(); vb = (vb || "").toLowerCase(); }
+    if (va == null && vb == null) return 0;
+    if (va == null) return 1;
+    if (vb == null) return -1;
+    return preSortAsc ? (va > vb ? 1 : va < vb ? -1 : 0) : (va < vb ? 1 : va > vb ? -1 : 0);
+  });
+
+  thead.innerHTML = "";
+  PRE_COLS.forEach(function(c) {
+    var th = document.createElement("th");
+    th.textContent = c.label + (c.label && c.key === preSortCol ? (preSortAsc ? " ▲" : " ▼") : "");
+    if (c.title) th.title = c.title;
+    if (c.align) th.style.textAlign = c.align;
+    if (c.key === "team") th.classList.add("sticky-col");
+    if (c.label) th.addEventListener("click", function() {
+      if (preSortCol === c.key) preSortAsc = !preSortAsc;
+      else { preSortCol = c.key; preSortAsc = (c.key === "rank" || c.key === "team" || c.key === "conference" || c.key === "def" || c.key === "n_unprojected"); }
+      renderPreseason();
+    });
+    thead.appendChild(th);
+  });
+
+  var nets = PRESEASON.teams.filter(function(t){ return t.rank; }).map(function(t){ return t.net; });
+  var nMin = Math.min.apply(null, nets), nMax = Math.max.apply(null, nets);
+  tbody.innerHTML = rows.map(function(t) {
+    var dim = (!t.rank || t.confidence === "low") ? ' class="pre-dim"' : "";
+    return "<tr" + dim + ">" + PRE_COLS.map(function(c) {
+      if (c.key === "team") {
+        var shortName = _logoMap[t.team_abbr] || t.team;
+        return '<td class="team-cell sticky-col" style="text-align:left"><a href="javascript:void(0)" onclick="goToTeamPage(\'' +
+          t.team_abbr.replace(/'/g, "\\'") + '\')">' + ppLogoImg(t.team_abbr, 18) + ' <span class="full-name">' + t.team +
+          '</span><span class="short-name">' + shortName + '</span></a></td>';
+      }
+      if (c.key === "conference") {
+        return '<td class="conf-cell" style="text-align:left">' + (t.conference ? '<a href="javascript:void(0)" onclick="goToConfDetail(\'' +
+          t.conference.replace(/'/g, "\\'") + '\')">' + t.conference + '</a>' : "–") + '</td>';
+      }
+      if (c.key === "confidence") return '<td style="text-align:left">' + preTeamBadge(t) + '</td>';
+      var v = t[c.key], style = "text-align:center";
+      if (c.key === "net" && v != null && t.rank) {
+        var bg = heatColor(v, nMin, nMax);
+        if (bg) style += ";background:" + bg;
+        style += ";font-weight:600";
+      }
+      return '<td style="' + style + '">' + (c.fmt ? c.fmt(v) : (v == null ? "–" : v)) + '</td>';
+    }).join("") + "</tr>";
+  }).join("");
+  var nRanked = PRESEASON.teams.filter(function(t){ return t.rank; }).length;
+  count.textContent = rows.length + " of " + PRESEASON.teams.length + " teams (" + nRanked + " ranked)";
+}
+
+/* Returner / Transfer / Freshman -- p.group (build_preseason_json.py folds the
+   model's other roles into these); PRE_ROLE is the fallback for older data. */
+function preRoleLabel(p) {
+  return { returner: "Returner", transfer: "Transfer", freshman: "Freshman" }[p.group] || PRE_ROLE[p.role] || p.role || "";
+}
+var PRE_ROLE = { returner: "Returner", transfer: "Transfer", freshman: "Freshman", late_recruit: "Returner",
+                 hole_returner: "Returner", hole_newcomer: "Newcomer" };
+
+/* Preseason section at the top of a team's Overview: projected Off/Def/Net
+   plus every rostered player's projection and how it was made. */
+function tpRenderPreseason() {
+  var el = document.getElementById("tpPreseason");
+  var t = PRESEASON && PRESEASON.byAbbr[tpSelectedTeam];
+  if (!t) { el.style.display = "none"; el.innerHTML = ""; return; }
+  var players = (PRESEASON.players[tpSelectedTeam] || []).slice().sort(function(a, b) {
+    var ga = a.rapm == null ? 2 : (a.confidence === "low" ? 1 : 0), gb = b.rapm == null ? 2 : (b.confidence === "low" ? 1 : 0);
+    if (ga !== gb) return ga - gb;
+    return (b.share || 0) - (a.share || 0);
+  });
+  var rankTxt = t.rank ? "#" + t.rank : "–";
+  var rankSub = t.rank ? "of " + PRESEASON.meta.n_ranked + " ranked" : (t.roster_status === "stale" ? "roster not updated yet" : "no projectable players");
+  var card = function(lbl, val, sub) { return '<div class="pre-card"><div class="lbl">' + lbl + '</div><div class="val">' + val + '</div>' + (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div>'; };
+  var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;">' +
+    '<h3 style="font-size:.92rem;margin:0;">' + seasonLabel(PRESEASON.meta.season) + ' Preseason Projection</h3>' + preTeamBadge(t) +
+    '<a href="javascript:void(0)" onclick="switchPage(\'preseason\')" style="font-size:.75rem;color:var(--accent);margin-left:auto;">All teams →</a></div>';
+  html += '<div class="pre-cards">' +
+    card("Proj Rank", rankTxt, rankSub) +
+    card("Proj Net", preSigned(t.net, 1), "Off minus Def") +
+    card("Proj Off", preNum(t.off, 1), "pts / 100 poss") +
+    card("Proj Def", preNum(t.def, 1), "allowed / 100 poss") +
+    card("Coverage", t.coverage == null ? "–" : Math.round(t.coverage * 100) + "%", "of possessions projectable") +
+    '</div>';
+  html += '<div style="overflow-x:auto"><table class="tp-table"><thead><tr>' +
+    ['Player','Pos','Class','Role','Proj RAPM','ORAPM','DRAPM','Proj MPG',''].map(function(h, i){ return '<th' + (i === 0 || i === 3 ? ' style="text-align:left"' : '') + '>' + h + '</th>'; }).join("") +
+    '<th style="text-align:left">Basis</th></tr></thead><tbody>';
+  html += players.map(function(p) {
+    var role = preRoleLabel(p);
+    if (p.role === "transfer" && p.prior_team) role += ' <span style="color:var(--text-dim)">from ' + p.prior_team + '</span>';
+    var badge = p.confidence === "low" ? '<span class="conf-badge" title="Barely better than a plain average in backtesting; not counted in the team projection">low confidence</span>'
+              : p.confidence === "none" ? '<span class="conf-badge muted" title="No projection method: JUCO, international, unranked, or barely played last season">no projection</span>' : '';
+    var basis = p.rapm == null
+      ? (p.role === "hole_returner" ? "Played under 100 possessions last season" : "No D1 record or recruiting profile")
+      : p.method;
+    var cls = p.rapm == null || p.confidence === "low" ? ' class="pre-dim"' : '';
+    var rc = p.rapm == null ? "" : (p.rapm > 0 ? "net-pos" : p.rapm < 0 ? "net-neg" : "");
+    return '<tr' + cls + '><td style="text-align:left">' + prePlayerLink(p) + '</td><td>' + (p.pos || "–") + '</td><td>' + (p.cls || "–") +
+      '</td><td style="text-align:left">' + role + '</td><td class="' + rc + '" style="font-weight:600">' + preSigned(p.rapm, 2) +
+      '</td><td>' + preSigned(p.orapm, 2) + '</td><td>' + preSigned(p.drapm, 2) + '</td><td>' +
+      preMpg(p.share) + '</td><td>' + badge + '</td><td class="pre-basis">' + basis + '</td></tr>';
+  }).join("");
+  html += '</tbody></table></div>';
+  html += '<p class="pre-note" style="margin-top:6px;">RAPM is points per 100 possessions above an average player; returners and transfers are regressed for sample size (a 10-game season counts for less than a full one). Proj MPG is projected minutes per game: last season’s minutes in the games he played, adjusted for a transfer’s change in level (recruit model for freshmen). It sets how much each player counts in the team projection. ' +
+    'Low-confidence and unprojected players aren’t counted in the team projection.</p>';
+  el.innerHTML = html;
+  el.style.display = "block";
+}
+
+/* Preseason player rankings: every projected player across D1. */
+var prePlayerRows = null;
+var prePlSortCol = "rapm", prePlSortAsc = false;
+var PRE_PL_COLS = [
+  { key: "_rank", label: "Rk" },
+  { key: "name", label: "Player", align: "left" },
+  { key: "team", label: "Team", align: "left" },
+  { key: "conference", label: "Conf", align: "left" },
+  { key: "pos", label: "Pos" },
+  { key: "cls", label: "Class" },
+  { key: "role", label: "Role", align: "left" },
+  { key: "rapm", label: "Proj RAPM", title: "Projected points per 100 possessions above an average player" },
+  { key: "orapm", label: "ORAPM", title: "Offensive part of RAPM" },
+  { key: "drapm", label: "DRAPM", title: "Defensive part of RAPM" },
+  { key: "share", label: "Proj MPG", title: "Projected minutes per game: last season’s minutes in games played, adjusted for a transfer’s change in level (recruit model for freshmen)" },
+  { key: "method", label: "Basis", align: "left" }
+];
+
+function renderPrePlayers() {
+  var thead = document.getElementById("prePlayersHeader");
+  var tbody = document.getElementById("prePlayersTbody");
+  var count = document.getElementById("prePlayersCount");
+  var note = document.getElementById("prePlayersNote");
+  if (!PRESEASON) {
+    thead.innerHTML = ""; count.textContent = ""; note.innerHTML = "";
+    tbody.innerHTML = '<tr><td style="text-align:center;padding:40px;color:var(--text-dim)">There’s no preseason projection for ' + seasonLabel(getSeason()) + '.</td></tr>';
+    return;
+  }
+  if (!prePlayerRows) {
+    prePlayerRows = [];
+    Object.keys(PRESEASON.players).forEach(function(abbr) {
+      var t = PRESEASON.byAbbr[abbr] || {};
+      PRESEASON.players[abbr].forEach(function(p) {
+        if (p.rapm == null) return;
+        prePlayerRows.push(Object.assign({ team_abbr: abbr, team: t.team || abbr, conference: t.conference || "" }, p));
+      });
+    });
+    var confSel = document.getElementById("prePlayersConf");
+    var confs = {};
+    PRESEASON.teams.forEach(function(t){ if (t.conference) confs[t.conference] = 1; });
+    Object.keys(confs).sort().forEach(function(c){ var o = document.createElement("option"); o.value = c; o.textContent = c; confSel.appendChild(o); });
+  }
+  note.innerHTML = 'Projected RAPM for <strong>' + seasonLabel(PRESEASON.meta.season) + '</strong>: points per 100 possessions a player adds over an average player. ' +
+    'Returners use last season’s RAPM, transfers carry their RAPM from their previous school, and freshmen are projected from their national recruiting rank and position ' +
+    '(about +8 for the top 2 recruits, +5 to +6 for #10, +3 to +4 for #25, +1 for #100; wings run about half a point below guards and bigs). <strong>Low confidence</strong> marks former recruits projected from an old high-school ranking, which backtested only slightly better than a plain average. ' +
+    'The default view hides them and players projected for under 16 minutes a game, so the list isn’t dominated by noisy small samples.';
+
+  var q = document.getElementById("prePlayersSearch").value.toLowerCase();
+  var conf = document.getElementById("prePlayersConf").value;
+  var role = document.getElementById("prePlayersRole").value;
+  var minShare = parseFloat(document.getElementById("prePlayersMinShare").value) || 0;
+  var hideLow = document.getElementById("prePlayersHideLow").checked;
+  var size = parseInt(document.getElementById("prePlayersSize").value, 10);
+  var rows = prePlayerRows.filter(function(p) {
+    if (hideLow && p.confidence === "low") return false;
+    if (conf && p.conference !== conf) return false;
+    if (role && (p.group || p.role) !== role) return false;
+    if ((p.share || 0) < minShare) return false;
+    if (q && p.name.toLowerCase().indexOf(q) < 0 && p.team.toLowerCase().indexOf(q) < 0 && p.team_abbr.toLowerCase().indexOf(q) < 0) return false;
+    return true;
+  });
+  rows.sort(function(a, b) {
+    var va = a[prePlSortCol], vb = b[prePlSortCol];
+    if (typeof va === "string" || typeof vb === "string") { va = (va || "").toLowerCase(); vb = (vb || "").toLowerCase(); }
+    if (va == null) return 1; if (vb == null) return -1;
+    return prePlSortAsc ? (va > vb ? 1 : va < vb ? -1 : 0) : (va < vb ? 1 : va > vb ? -1 : 0);
+  });
+  var total = rows.length;
+  rows = rows.slice(0, size);
+
+  thead.innerHTML = "";
+  PRE_PL_COLS.forEach(function(c) {
+    var th = document.createElement("th");
+    th.textContent = c.label + (c.key === prePlSortCol ? (prePlSortAsc ? " ▲" : " ▼") : "");
+    if (c.title) th.title = c.title;
+    if (c.align) th.style.textAlign = c.align;
+    if (c.key !== "_rank") th.addEventListener("click", function() {
+      if (prePlSortCol === c.key) prePlSortAsc = !prePlSortAsc;
+      else { prePlSortCol = c.key; prePlSortAsc = ["name", "team", "conference", "pos", "cls", "role", "method"].indexOf(c.key) >= 0; }
+      renderPrePlayers();
+    });
+    thead.appendChild(th);
+  });
+  tbody.innerHTML = rows.map(function(p, i) {
+    var roleTxt = preRoleLabel(p);
+    if (p.role === "transfer" && p.prior_team) roleTxt += ' <span style="color:var(--text-dim)">from ' + p.prior_team + '</span>';
+    if (p.confidence === "low") roleTxt += ' <span class="conf-badge" title="Projected from an old high-school ranking; barely better than a plain average in backtesting">low confidence</span>';
+    var rc = p.rapm > 0 ? "net-pos" : p.rapm < 0 ? "net-neg" : "";
+    var teamLink = '<a href="javascript:void(0)" onclick="goToTeamPage(\'' + p.team_abbr.replace(/'/g, "\\'") + '\')">' + ppLogoImg(p.team_abbr, 16) + ' ' + (_logoMap[p.team_abbr] || p.team) + '</a>';
+    return '<tr' + (p.confidence === "low" ? ' class="pre-dim"' : '') + '>' +
+      '<td style="text-align:center">' + (i + 1) + '</td>' +
+      '<td style="text-align:left;font-weight:500">' + prePlayerLink(p) + '</td>' +
+      '<td class="team-cell" style="text-align:left">' + teamLink + '</td>' +
+      '<td style="text-align:left">' + (p.conference || "–") + '</td>' +
+      '<td style="text-align:center">' + (p.pos || "–") + '</td>' +
+      '<td style="text-align:center">' + (p.cls || "–") + '</td>' +
+      '<td style="text-align:left">' + roleTxt + '</td>' +
+      '<td class="' + rc + '" style="text-align:center;font-weight:600">' + preSigned(p.rapm, 2) + '</td>' +
+      '<td style="text-align:center">' + preSigned(p.orapm, 2) + '</td>' +
+      '<td style="text-align:center">' + preSigned(p.drapm, 2) + '</td>' +
+      '<td style="text-align:center">' + preMpg(p.share) + '</td>' +
+      '<td class="pre-basis">' + p.method + '</td></tr>';
+  }).join("");
+  count.textContent = "Showing " + rows.length + " of " + total + " players";
+}
 
 /* ===== TEAM PAGE ===== */
 var tpActiveSub = "tpOverview";
@@ -4602,8 +5439,8 @@ function renderTeamPage() {
   tpTeamInfo = tpAllTeams[tpSelectedTeam] || {};
   tpSimTeam = SIM[tpSelectedTeam] || null;
 
-  var games = GAMES_DATA[tpSelectedTeam];
-  if (!games || !games.length) {
+  var games = GAMES_DATA[tpSelectedTeam] || [];
+  if (!tpAllTeams[tpSelectedTeam]) {
     document.getElementById("tpTeamName").textContent = "No data for \"" + tpSelectedTeam + "\"";
     document.getElementById("tpRecord").textContent = "";
     return;
@@ -4619,7 +5456,8 @@ function renderTeamPage() {
 
   /* Header */
   var teamName = tpTeamInfo.team_displayName || tpSelectedTeam;
-  var mIcon = (tpTeamInfo.momentum_l5 >= 90) ? " \ud83d\udd25" : (tpTeamInfo.momentum_l5 <= 10) ? " \u2744\ufe0f" : "";
+  var mom = tpTeamInfo.momentum_l5;  /* null before any games -- and null <= 10 is true in JS */
+  var mIcon = mom == null ? "" : mom >= 90 ? " \ud83d\udd25" : mom <= 10 ? " \u2744\ufe0f" : "";
   document.getElementById("tpTeamName").innerHTML = ppLogoImg(tpSelectedTeam, 28) + ' ' + teamName + mIcon;
   /* Update nav icon with team logo */
   var navIcon = document.getElementById("tpNavIconWrap");
@@ -4718,9 +5556,13 @@ function tpEnrichGames(games) {
     g._opp_fb_pts_pct = oPts ? ((g.opp_fastBreakPoints||0)/oPts*100).toFixed(1) : "\u2013";
     g._opp_pip_pct    = oPts ? ((g.opp_pointsInPaint||0)/oPts*100).toFixed(1) : "\u2013";
 
-    /* NET quad (using official NET rankings) */
+    /* Quad: prefer official NET rankings (net_rankings.json) when
+       available (live Warren Nolan scrape, current in-progress season
+       only); otherwise fall back to our own SEED-rank-based quad
+       (g.quad/g.opp_seed_rank, always populated by build_site.py) --
+       same fallback pattern already used for Compare Teams. */
     var nr = NET_RANKS[g.opp_team_abbr];
-    g._netQuad = getOfficialQuad(g.homeAway, nr);
+    g._netQuad = (nr != null) ? getOfficialQuad(g.homeAway, nr) : g.quad;
   });
 }
 
@@ -4736,6 +5578,7 @@ function tpQuadRecords() {
 
 /* ---- Overview ---- */
 function tpRenderOverview(wins, losses) {
+  tpRenderPreseason();
   var qr = tpQuadRecords();
 
   /* Build three card groups */
@@ -4809,13 +5652,22 @@ function tpRenderOverview(wins, losses) {
   /* Upcoming games */
   var futureGames = SCHEDULE_RAW[tpSelectedTeam] || [];
   var upTbl = document.getElementById("tpUpcomingTable");
-  upTbl.querySelector("thead tr").innerHTML = ["Date","Opponent","Loc","Proj Quad"].map(function(h){return "<th>"+h+"</th>";}).join("");
+  upTbl.querySelector("thead tr").innerHTML = ["Date","Opponent","Loc","Proj Quad","Prediction","Win %"].map(function(h){return "<th>"+h+"</th>";}).join("");
+  /* projected record for the rest of the season: expected wins = sum of win chances */
+  var expW = 0, nPred = 0;
+  futureGames.forEach(function(g){ var p = predictionFor(g.game_id, tpSelectedTeam); if (p) { expW += p.win; nPred++; } });
+  var cur = (tpTeamInfo.record || "0-0").split("-").map(Number);
+  document.getElementById("tpProjRecord").textContent = nPred
+    ? "· projected final record " + Math.round((cur[0] || 0) + expW) + "-" + Math.round((cur[1] || 0) + nPred - expW)
+      + (nPred < futureGames.length ? " (" + nPred + " of " + futureGames.length + " games predicted)" : "")
+    : "";
   if (!futureGames.length) {
-    upTbl.querySelector("tbody").innerHTML = '<tr><td colspan="4" style="color:var(--text-dim)">No upcoming games</td></tr>';
+    upTbl.querySelector("tbody").innerHTML = '<tr><td colspan="6" style="color:var(--text-dim)">No upcoming games</td></tr>';
   } else {
-    upTbl.querySelector("tbody").innerHTML = futureGames.slice(0,8).map(function(g) {
+    upTbl.querySelector("tbody").innerHTML = futureGames.map(function(g) {
       var opp = tpAllTeams[g.opp_abbr];
-      var oppRank = opp ? opp.rank_net : null;
+      var oppRank = opp && opp.rank_net != null ? opp.rank_net
+        : (PRESEASON && PRESEASON.byAbbr[g.opp_abbr] ? PRESEASON.byAbbr[g.opp_abbr].rank : null);  /* preseason rank before NET exists */
       var loc = g.neutralSite ? "N" : g.homeAway==="home" ? "Home" : g.homeAway==="away" ? "Away" : "\u2013";
       var ha = g.neutralSite ? "neutral" : g.homeAway;
       var quad = typeof oppRank === "number" ? getOfficialQuad(ha, oppRank) : null;
@@ -4825,8 +5677,18 @@ function tpRenderOverview(wins, losses) {
       var oppAbbrU = g.opp_abbr || "";
       var oppNameU = g.opp_displayName || g.opp_abbr || "\u2013";
       var oppLinkU = oppAbbrU ? '<a href="#" onclick="goToTeamPage(\''+oppAbbrU+'\');return false;" style="color:var(--accent);text-decoration:none;">'+(g.homeAway==="away"?"@ ":"")+oppNameU+'</a>' : (g.homeAway==="away"?"@ ":"")+oppNameU;
+      /* predicted result from this team's side: "W 78-70" / "L 64-71", and its win chance */
+      var pr = predictionFor(g.game_id, tpSelectedTeam), predCell = "\u2013", winCell = "\u2013", winCls = "";
+      if (pr) {
+        var tP = Math.round(pr.pts), oP = Math.round(pr.oppPts);
+        if (tP === oP) { if (pr.pts >= pr.oppPts) tP += 1; else oP += 1; }
+        predCell = (tP > oP ? "W " : "L ") + tP + "-" + oP;
+        winCell = Math.round(pr.win * 100) + "%";
+        winCls = pr.win >= 0.5 ? "net-pos" : "net-neg";
+      }
       return "<tr><td>"+dateDisp+"</td><td style='text-align:left'>"+oppLinkU
-        +"</td><td>"+loc+"</td><td class='"+qCls+"'>"+(quad?"Q"+quad:"\u2013")+"</td></tr>";
+        +"</td><td>"+loc+"</td><td class='"+qCls+"'>"+(quad?"Q"+quad:"\u2013")+"</td><td>"+predCell
+        +"</td><td class='"+winCls+"' style='font-weight:600'>"+winCell+"</td></tr>";
     }).join("");
   }
 
@@ -4925,7 +5787,26 @@ function tpRenderRoster() {
   }).join("")+'</tr>';
 
   if (!roster.length) {
-    tbl.querySelector("tbody").innerHTML = '<tr><td colspan="'+COLS.length+'" style="color:var(--text-dim);padding:20px">No roster data found</td></tr>';
+    var pre = PRESEASON && PRESEASON.players && PRESEASON.players[tpSelectedTeam];
+    if (pre && pre.length) {
+      /* before the first game: the projected roster from the preseason model */
+      var f2 = function(v){ return v != null ? v.toFixed(2) : "\u2013"; };
+      tbl.querySelector("thead").innerHTML = '<tr><th class="sticky-col" style="text-align:left">Player</th><th>Pos</th><th>Class</th>' +
+        '<th>Proj RAPM</th><th>ORAPM</th><th>DRAPM</th><th>Proj MPG</th><th style="text-align:left">Role</th><th style="text-align:left">Based on</th></tr>';
+      tbl.querySelector("tbody").innerHTML = pre.slice().sort(function(a, b){ return (b.share || 0) - (a.share || 0); }).map(function(p) {
+        return '<tr><td class="sticky-col" style="text-align:left">' + prePlayerLink(p) + '</td><td style="text-align:center">' + (p.pos || "") + '</td>' +
+          '<td style="text-align:center">' + (p.cls || "") + '</td><td style="text-align:center">' + f2(p.rapm) + '</td>' +
+          '<td style="text-align:center">' + f2(p.orapm) + '</td><td style="text-align:center">' + f2(p.drapm) + '</td>' +
+          '<td style="text-align:center">' + preMpg(p.share) + '</td>' +
+          '<td style="text-align:left">' + preRoleLabel(p) + (p.role === "transfer" && p.prior_team ? " (" + p.prior_team + ")" : "") + '</td>' +
+          '<td style="text-align:left;color:var(--text-dim)">' + (p.rapm == null
+            ? (p.role === "hole_returner" ? "Played under 100 possessions last season" : "No D1 record or recruiting profile")
+            : (p.method || "")) + '</td></tr>';
+      }).join("") + '<tr><td colspan="9" style="color:var(--text-dim);padding:10px;text-align:left">Preseason projection \u2014 season stats replace it once games are played.</td></tr>';
+      return;
+    }
+    tbl.querySelector("tbody").innerHTML = '<tr><td colspan="'+COLS.length+'" style="color:var(--text-dim);padding:20px">' +
+      (PLAYERS_LOADED && !PLAYERS_DATA.length ? 'Player stats aren’t available for this season (they start in 2023-24). Box scores are in the Full Game Log.' : 'No roster data found') + '</td></tr>';
     return;
   }
 
@@ -5131,8 +6012,57 @@ function tpComputeWabForGame(oppSrs, homeAway, bubbleEM) {
   return { wabWin: 1.0 - pBubble, wabLoss: 0.0 - pBubble };
 }
 
+/* Win probability from net ratings and location -- simulate.py's model. */
+function tpWinP(teamEm, oppEm, homeAway) {
+  var loc = homeAway === "home" ? 3.0 : homeAway === "away" ? -3.0 : 0;
+  return 1 / (1 + Math.exp(-0.17 * (teamEm - oppEm + loc) * 0.689));
+}
+/* The team's rating after the results picked in the what-if: weighs them
+   against how uncertain its rating is now -- posterior mode of a normal
+   prior (SD 1/sqrt(1/6.3^2 + games/16.8^2), as in simulate.py: wide before
+   the season, narrow by February) and a logistic game model. An 0-10 start
+   moves a preseason rating a long way; in February the same picks move it
+   far less. */
+function tpUpdatedRating(futureGames, selections) {
+  var r0 = tpNet(tpSelectedTeam);
+  if (r0 == null) return null;
+  var gp = tpTeamInfo.games_count || 0;
+  var prec = 1 / (6.3 * 6.3) + gp / (16.8 * 16.8);
+  var g = 0.17 * 0.689, r = r0;
+  for (var it = 0; it < 8; it++) {
+    var grad = -(r - r0) * prec, hess = -prec;
+    futureGames.forEach(function(gm, i) {
+      var sel = selections[i];
+      var on = tpNet(gm.opp_abbr);
+      if (!sel || on == null) return;
+      var pw = tpWinP(r, on, gm.neutralSite ? "neutral" : gm.homeAway);
+      grad += g * ((sel === "win" ? 1 : 0) - pw);
+      hess -= g * g * pw * (1 - pw);
+    });
+    r -= grad / hess;
+  }
+  return r;
+}
+
+/* Resume Simulator ratings: a team's in-season net rating and rank, or --
+   before it has played (the whole preseason) -- its preseason projection.
+   simulate.py does the same, so the odds/seed cards agree with the table. */
+function tpNet(abbr) {
+  var t = tpAllTeams[abbr];
+  if (t && t.net_srs != null) return t.net_srs;
+  var p = PRESEASON && PRESEASON.byAbbr && PRESEASON.byAbbr[abbr];
+  return p && p.net != null ? p.net : null;
+}
+function tpRankOf(abbr) {
+  var t = tpAllTeams[abbr];
+  if (t && t.net_srs != null && t.rank_net != null) return t.rank_net;
+  var p = PRESEASON && PRESEASON.byAbbr && PRESEASON.byAbbr[abbr];
+  return p && p.rank ? p.rank : null;
+}
 function tpRenderResumeSim(wins, losses) {
   var futureGames = SCHEDULE_RAW[tpSelectedTeam] || [];
+  var simNote = document.getElementById("tpWhatifNote");
+  if (simNote) simNote.style.display = isPreseason() ? "" : "none";
   var thead = document.getElementById("tpSchedTable").querySelector("thead");
   var tbody = document.getElementById("tpSchedTable").querySelector("tbody");
   var AVG_POSS = 68.9, HOME_ADV_WAB = 3.0, SCORE_SCALE = 1.10;
@@ -5146,9 +6076,10 @@ function tpRenderResumeSim(wins, losses) {
   document.getElementById("tpWhatifWrap").style.display = "block";
 
   /* Bubble EM */
-  var allTeamArr = Object.keys(tpAllTeams).map(function(k){return tpAllTeams[k];});
-  var sortedSrs = allTeamArr.map(function(t){return t.net_srs;}).filter(function(v){return v!=null;}).sort(function(a,b){return b-a;});
-  var bubbleSlice = sortedSrs.slice(34,55);
+  var allAbbrs = Object.keys(tpAllTeams);
+  if (PRESEASON && PRESEASON.byAbbr) Object.keys(PRESEASON.byAbbr).forEach(function(a){ if (!tpAllTeams[a]) allAbbrs.push(a); });
+  var sortedSrs = allAbbrs.map(tpNet).filter(function(v){return v!=null;}).sort(function(a,b){return b-a;});
+  var bubbleSlice = sortedSrs.slice(34 + bubbleShift(), 55 + bubbleShift());
   var bubbleEM = bubbleSlice.length ? bubbleSlice.reduce(function(s,v){return s+v;},0)/bubbleSlice.length : 0;
   var teamAdjE = tpTeamInfo.net_srs || 0;
 
@@ -5156,10 +6087,10 @@ function tpRenderResumeSim(wins, losses) {
 
   var rows = futureGames.map(function(g, idx) {
     var opp = tpAllTeams[g.opp_abbr];
-    var oppRank = opp ? opp.rank_net : "\u2013";
-    var oppAdjE = opp && opp.net_srs!=null ? (opp.net_srs>=0?"+":"")+opp.net_srs.toFixed(2) : "\u2013";
-    var adjECls = opp && opp.net_srs!=null ? (opp.net_srs>0?"net-pos":opp.net_srs<0?"net-neg":"") : "";
-    var oppSrs = opp ? opp.net_srs : null;
+    var oppSrs = tpNet(g.opp_abbr);
+    var oppRank = tpRankOf(g.opp_abbr) || "\u2013";
+    var oppAdjE = oppSrs!=null ? (oppSrs>=0?"+":"")+oppSrs.toFixed(2) : "\u2013";
+    var adjECls = oppSrs!=null ? (oppSrs>0?"net-pos":oppSrs<0?"net-neg":"") : "";
     var loc = g.neutralSite ? "N" : g.homeAway==="home" ? "Home" : g.homeAway==="away" ? "Away" : "\u2013";
     var ha = g.neutralSite ? "neutral" : g.homeAway;
     var quad = typeof oppRank === "number" ? getOfficialQuad(ha, oppRank) : null;
@@ -5173,7 +6104,10 @@ function tpRenderResumeSim(wins, losses) {
     var expectedStr = "\u2013";
     var teamOE=tpTeamInfo.OffEff_srs, teamDE=tpTeamInfo.DefEff_srs, teamT=tpTeamInfo.Tempo_srs;
     var oppOE=opp?opp.OffEff_srs:null, oppDE=opp?opp.DefEff_srs:null, oppT=opp?opp.Tempo_srs:null;
-    if (teamOE!=null && teamDE!=null && oppOE!=null && oppDE!=null && teamT!=null && oppT!=null) {
+    var simPred = predictionText(g.game_id, tpSelectedTeam, tpTeamInfo.team_displayName||tpSelectedTeam, oppName);
+    if (simPred) {
+      expectedStr = simPred.text;
+    } else if (teamOE!=null && teamDE!=null && oppOE!=null && oppDE!=null && teamT!=null && oppT!=null) {
       var posn = teamT*oppT/AVG_POSS;
       var adjTeamOE=teamOE, adjOppOE=oppOE;
       if (g.homeAway==="home") { adjTeamOE+=HOME_ADV_WAB/2; adjOppOE-=HOME_ADV_WAB/2; }
@@ -5246,12 +6180,12 @@ function tpUpdateWhatIf(wins, losses, futureGames, bubbleEM) {
   futureGames.forEach(function(g,i) {
     if (tpWhatifSelections[i]==="win") {
       selectedWins++;
-      var opp=tpAllTeams[g.opp_abbr];
-      if (opp && opp.net_srs!=null) { deltaWab += tpComputeWabForGame(opp.net_srs,g.homeAway,bubbleEM).wabWin; }
+      var on=tpNet(g.opp_abbr);
+      if (on!=null) { deltaWab += tpComputeWabForGame(on,g.homeAway,bubbleEM).wabWin; }
     } else if (tpWhatifSelections[i]==="loss") {
       selectedLosses++;
-      var opp=tpAllTeams[g.opp_abbr];
-      if (opp && opp.net_srs!=null) { deltaWab += tpComputeWabForGame(opp.net_srs,g.homeAway,bubbleEM).wabLoss; }
+      var on=tpNet(g.opp_abbr);
+      if (on!=null) { deltaWab += tpComputeWabForGame(on,g.homeAway,bubbleEM).wabLoss; }
     }
   });
   var totalGames = futureGames.length;
@@ -5273,17 +6207,31 @@ function tpUpdateWhatIf(wins, losses, futureGames, bubbleEM) {
 
   /* Weighted projection via seed_by_losses */
   var sbl = tpSimTeam ? (tpSimTeam.seed_by_losses||[]) : [];
+  /* Chance of losing each game left unpicked: at the team's rating UPDATED
+     for the picked results (an 0-10 start means a weaker team for the rest
+     of the season too), averaged over those games. Before any pick: the
+     simulation's own expected losses. */
   var totalSims = sbl.reduce(function(s,b){return s+b.sims;},0);
   var expectedLosses = totalSims>0 ? sbl.reduce(function(s,b){return s+b.losses*b.sims;},0)/totalSims : 0;
   var pLoss = totalGames>0 ? Math.min(Math.max(expectedLosses/totalGames,0.01),0.99) : 0.5;
+  var rUpd = (selectedWins + selectedLosses > 0) ? tpUpdatedRating(futureGames, tpWhatifSelections) : null;
+  if (rUpd != null && unselected > 0) {
+    var expL = 0, nU = 0;
+    futureGames.forEach(function(gm, i) {
+      var on = tpNet(gm.opp_abbr);
+      if (tpWhatifSelections[i] || on == null) return;
+      expL += 1 - tpWinP(rUpd, on, gm.neutralSite ? "neutral" : gm.homeAway); nU++;
+    });
+    if (nU) pLoss = Math.min(Math.max(expL / nU, 0.01), 0.99);
+  }
   var pWin = 1 - pLoss;
 
   /* avg WAB per game for residual calc */
   var avgWabWin=0, avgWabLoss=0, wabCount=0;
   futureGames.forEach(function(g) {
-    var opp=tpAllTeams[g.opp_abbr];
-    if (opp && opp.net_srs!=null) {
-      var wab=tpComputeWabForGame(opp.net_srs,g.homeAway,bubbleEM);
+    var on=tpNet(g.opp_abbr);
+    if (on!=null) {
+      var wab=tpComputeWabForGame(on,g.homeAway,bubbleEM);
       avgWabWin+=wab.wabWin; avgWabLoss+=wab.wabLoss; wabCount++;
     }
   });
@@ -5718,7 +6666,7 @@ function tpRenderLineups() {
   tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--text-muted);">Loading lineups…</td></tr>';
   document.getElementById("tpLineupCount").textContent = "";
 
-  fetch("lineup_data/" + team + ".json")
+  fetch(dataUrl("lineup_data/" + team + ".json"))
     .then(function(r) { return r.ok ? r.json() : []; })
     .then(function(data) {
       tpLineupData = data;
@@ -5792,12 +6740,16 @@ function tpRenderLineupTable() {
   });
 
   /* Count label */
-  document.getElementById("tpLineupCount").textContent = filtered.length + " of " + data.length + " lineups";
+  document.getElementById("tpLineupCount").textContent = data.length ? filtered.length + " of " + data.length + " lineups" : "";
 
   /* Build rows */
   var tbody = document.getElementById("tpLineupBody");
   if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--text-muted);">No lineups match filter</td></tr>';
+    var why = data.length ? "No lineups match the filter — try a lower Min Poss."
+      : isPreseason() ? "Lineup ratings start once games are played."
+      : Number(getSeason()) < 2024 ? "Lineup ratings aren’t available for this season (they start in 2023-24)."
+      : "No lineup data for this team.";
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--text-muted);">' + why + '</td></tr>';
     return;
   }
 
@@ -5946,6 +6898,11 @@ function ppFix2(v) { return v != null ? Number(v).toFixed(2) : '\u2013'; }
 
 /* Team logo URL helper — complete map of all 365 teams */
 var _logoMap = {
+  /* CBD abbreviations that differ from the old ESPN ones, plus programs added
+     or dropped since (Hartford / St. Francis Brooklyn left D1 after 2022-23,
+     West Florida joined in 2026-27 -- CBD's abbreviation has a trailing space) */
+  "AFA":"Air Force","ALB":"Albany","JVST":"Jacksonville St.","HART":"Hartford",
+  "SFBK":"St. Francis Brooklyn","WEST ":"West Florida",
   "AAMU":"Alabama A&M","ACU":"Abilene Christian","AF":"Air Force",
   "AKR":"Akron","ALA":"Alabama","ALCN":"Alcorn St.",
   "ALST":"Alabama St.","AMCC":"Texas A&M Corpus Chris","AMER":"American",
@@ -6285,8 +7242,14 @@ document.querySelectorAll(".pp-log-btn").forEach(function(btn) {
   var acBox = document.getElementById("ppPlayerAC");
   input.addEventListener("input", function() {
     var q = input.value.trim().toLowerCase();
-    if (q.length < 2 || !PLAYERS_DATA || !PLAYERS_DATA.length) { acBox.style.display = "none"; return; }
-    var matches = PLAYERS_DATA.filter(function(p) {
+    /* before any games, search the preseason rosters instead */
+    var pool = (PLAYERS_DATA && PLAYERS_DATA.length) ? PLAYERS_DATA
+      : (PRESEASON ? Object.keys(PRESEASON.players).reduce(function(acc, abbr) {
+          return acc.concat(PRESEASON.players[abbr].filter(function(p){ return p.id; })
+            .map(function(p){ return { id: p.id, name: p.name, team: abbr }; }));
+        }, []) : []);
+    if (q.length < 2 || !pool.length) { acBox.style.display = "none"; return; }
+    var matches = pool.filter(function(p) {
       return p.name.toLowerCase().indexOf(q) >= 0 || (p.team && p.team.toLowerCase().indexOf(q) >= 0);
     }).slice(0, 12);
     if (!matches.length) { acBox.style.display = "none"; return; }
@@ -6328,6 +7291,86 @@ function ppNavigateToPlayer(playerId) {
   }
 }
 
+/* A preseason player's name, linked to his player page (preview before games). */
+function prePlayerLink(p) {
+  return p.id ? '<a href="javascript:void(0)" onclick="ppNavigateToPlayer(\'' + p.id + '\')" style="color:var(--accent);text-decoration:none">' + p.name + '</a>' : p.name;
+}
+
+/* Show/hide everything on the player page below the hero section. */
+function ppShowStatSections(show) {
+  var panel = document.getElementById("panelPlayerPage");
+  Array.prototype.forEach.call(panel.children, function(el) {
+    if (el.id !== "ppSelector" && el.id !== "ppHeroSection") el.style.display = show ? "" : "none";
+  });
+}
+
+/* Open this player's page for another season. Navigates (?season= wins over
+   the saved choice in getSeason, and the rest of the site reloads for that
+   season too, so everything stays consistent). */
+function ppJumpSeason(season, playerId) {
+  setSeason(String(season));
+  var u = new URL(window.location.href);
+  u.searchParams.set("season", String(season));
+  u.hash = "ppPage&player=" + encodeURIComponent(playerId);
+  window.location.href = u.toString();
+}
+
+/* Preseason preview page: bio, projection, and a summary of every past
+   season he has a player page for (data.history, build_preseason_json.py). */
+function renderPlayerPreview(playerId, data) {
+  var info = data.info, pre = data.preseason || {};
+  var esc = function(v){ return String(v == null ? "" : v).replace(/'/g, "\\'"); };
+  /* one full-width block: [bio | projection] on top, previous seasons below */
+  var h = '<div style="width:100%"><div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">' +
+          '<div class="pp-bio-card" style="flex:0 1 420px"><div style="display:flex;align-items:center;gap:10px;"><div class="pp-player-name">' + info.player_name + '</div>' +
+          (info.team_abbr ? ppLogoImg(info.team_abbr, 32) : '') + '</div>';
+  if (info.team_name) h += '<a class="pp-team-link" href="javascript:void(0)" onclick="goToTeamPage(\'' + esc(info.team_abbr) + '\')">' + info.team_name + '</a>';
+  h += '<div class="pp-bio-meta">';
+  if (info.position) h += '<span><span class="label">POS</span> ' + info.position + '</span>';
+  if (info.height) h += '<span><span class="label">HT</span> ' + info.height + '</span>';
+  if (info.weight) h += '<span><span class="label">WT</span> ' + Math.round(info.weight) + ' lbs</span>';
+  if (info.experience) h += '<span><span class="label">YR</span> ' + info.experience + '</span>';
+  h += '</div></div>';
+  var role = preRoleLabel(pre) + (pre.role === "transfer" && pre.prior_team ? " from " + pre.prior_team : "");
+  var card = function(val, lbl, sub) {
+    return '<div class="pp-stat-card"><div class="stat-val">' + val + '</div><div class="stat-lbl">' + lbl + '</div>' +
+           (sub ? '<div style="font-size:.68rem;color:var(--text-dim);margin-top:2px">' + sub + '</div>' : '') + '</div>';
+  };
+  h += '<div style="flex:1;min-width:320px"><div style="margin:6px 0 8px;font-size:.8rem;color:var(--text-dim)"><strong style="color:var(--text)">' + seasonLabel(getSeason()) +
+       ' preseason projection</strong> &middot; ' + role + (pre.confidence === "low" ? ' &middot; <span class="conf-badge">low confidence</span>' : '') + '</div>';
+  h += '<div class="pp-stat-cards">';
+  if (pre.rapm != null) {
+    h += card(preSigned(pre.rapm, 2), "Proj RAPM", "O " + preSigned(pre.orapm, 2) + " / D " + preSigned(pre.drapm, 2));
+    h += card(pre.mpg != null ? pre.mpg.toFixed(1) : "–", "Proj MPG");
+    h += card(pre.rank ? "#" + pre.rank : "–", "Preseason rank", pre.rank ? "of " + pre.n_ranked + " players" : "below 16 mpg or low confidence");
+  } else {
+    h += card("–", "Proj RAPM", "no projection: no D1 record or recruiting profile");
+  }
+  if (pre.team_rank) h += card("#" + pre.team_rank, "Team rank", info.team_abbr + " projected");
+  h += '</div>';
+  if (pre.method) h += '<p class="pre-note" style="margin:10px 0 0">Basis: ' + pre.method + '. Full stats, shot chart and game log start once he plays this season.</p>';
+  h += '</div></div>';  /* close projection column + top row */
+  var hist = data.history || [];
+  h += '<h3 style="font-size:.92rem;margin:18px 0 6px">Previous seasons</h3>';
+  if (!hist.length) {
+    h += '<p class="pre-note">No previous Division I seasons on file.</p>';
+  } else {
+    h += '<div style="overflow-x:auto"><table class="tp-table"><thead><tr><th style="text-align:left">Season</th><th style="text-align:left">Team</th>' +
+         '<th>PPG</th><th>RPG</th><th>APG</th><th>MPG</th><th>RAPM</th><th>ORAPM</th><th>DRAPM</th><th>RAPM Rk</th></tr></thead><tbody>';
+    hist.forEach(function(x) {
+      var f1 = function(v){ return v == null ? "–" : Number(v).toFixed(1); };
+      h += '<tr><td style="text-align:left"><a href="javascript:void(0)" onclick="ppJumpSeason(' + x.season + ',\'' + esc(playerId) + '\')" style="color:var(--accent)">' + x.label + '</a></td>' +
+           '<td style="text-align:left">' + (x.team ? ppLogoImg(x.team, 16) + ' ' : '') + (x.team_name || x.team || "") + '</td>' +
+           '<td>' + f1(x.ppg) + '</td><td>' + f1(x.rpg) + '</td><td>' + f1(x.apg) + '</td><td>' + f1(x.mpg) + '</td>' +
+           '<td style="font-weight:600">' + preSigned(x.rapm, 2) + '</td><td>' + preSigned(x.orapm, 2) + '</td><td>' + preSigned(x.drapm, 2) + '</td>' +
+           '<td>' + (x.rapm_rank ? "#" + x.rapm_rank : "–") + '</td></tr>';
+    });
+    h += '</tbody></table></div><p class="pre-note" style="margin-top:4px">Click a season for that season\'s full player page.</p>';
+  }
+  h += '</div>';  /* close full-width block */
+  document.getElementById("ppHeroSection").innerHTML = h;
+}
+
 function loadPlayerPage(playerId) {
   var heroEl = document.getElementById("ppHeroSection");
   heroEl.innerHTML = '<p style="color:var(--text-dim)">Loading player data\u2026</p>';
@@ -6335,7 +7378,7 @@ function loadPlayerPage(playerId) {
   document.getElementById("ppLogBody").innerHTML = "";
   document.getElementById("ppFreqBars").innerHTML = "";
 
-  fetch("player_data/" + playerId + ".json")
+  fetch(dataUrl("player_data/" + playerId + ".json"))
   .then(function(r) { if (!r.ok) throw new Error("Player not found"); return r.json(); })
   .then(function(data) {
     ppData = data;
@@ -6351,6 +7394,31 @@ function loadPlayerPage(playerId) {
     if (info.position_abbr) infoParts.push(info.position_abbr);
     if (info.team_abbr) infoParts.push(info.team_abbr);
     document.getElementById("ppSubInfo").textContent = infoParts.join(" \u00B7 ");
+
+    /* This player's own season dropdown -- only the years they actually
+       played (available_seasons, from build_player_seasons_index.py).
+       Distinct from the header's per-page season dropdown. */
+    var ppSeasons = (data.available_seasons && data.available_seasons.length)
+      ? data.available_seasons : [{ season: Number(getSeason()), label: getSeason() }];
+    var ppSSel = document.getElementById("ppSeasonSelect");
+    ppSSel.innerHTML = "";
+    var ppCurSeason = getSeason();
+    ppSeasons.forEach(function(s) {
+      var opt = document.createElement("option");
+      opt.value = String(s.season);
+      opt.textContent = s.label || String(s.season);
+      if (String(s.season) === ppCurSeason) opt.selected = true;
+      ppSSel.appendChild(opt);
+    });
+    ppSSel.disabled = ppSeasons.length <= 1;
+    ppSSel.onchange = function() {
+      ppJumpSeason(ppSSel.value, playerId);
+    };
+
+    /* Preseason preview (no games yet): projection + past seasons; the stat
+       sections below only exist once he has played this season. */
+    ppShowStatSections(!data.preview);
+    if (data.preview) { renderPlayerPreview(playerId, data); return; }
 
     /* Hero section */
     var bioHTML = '<div class="pp-bio-card">';
@@ -6534,7 +7602,24 @@ function loadPlayerPage(playerId) {
     ppDrawTrends();
 
   }).catch(function(e) {
-    heroEl.innerHTML = '<p style="color:var(--red)">Error: ' + e.message + '</p>';
+    loadSeasonsManifest().then(function(seasons) {
+      var cur = seasons.filter(function(s){ return String(s.season) === getSeason(); })[0];
+      var label = cur ? cur.label : getSeason();
+      /* no page for this player this season (e.g. a 2021-22 box score --
+         player pages start in 2023-24): offer the seasons they do have */
+      ppShowStatSections(false);
+      var ppSSel = document.getElementById("ppSeasonSelect");
+      if (ppSSel) ppSSel.innerHTML = "";
+      heroEl.innerHTML = '<p style="color:var(--text-dim);padding:1rem 0">No player page for this player in ' + label + '.</p>';
+      fetch("data/player_seasons.json").then(function(r){ return r.json(); }).then(function(idx) {
+        var have = idx[playerId] || [];
+        if (!have.length) return;
+        heroEl.innerHTML = '<p style="color:var(--text-dim);padding:1rem 0">No player page for this player in ' + label +
+          '. Available seasons: ' + have.map(function(sv) {
+            return '<a href="javascript:void(0)" onclick="ppJumpSeason(\'' + sv + '\', \'' + playerId + '\')" style="color:var(--accent)">' + seasonLabel(sv) + '</a>';
+          }).join(", ") + '</p>';
+      }).catch(function(){});
+    });
   });
 }
 
@@ -6558,6 +7643,307 @@ function goToGameResults(dateStr) {
     gameCurrentDate = dateStr;
     renderGameDate();
   }
+}
+
+/* ================================================================
+   PREDICTION TRACKER
+   Every game's prediction is locked at tip-off (build_predictions.py ->
+   prediction_log.json) and graded against the final score and the closing
+   betting line (build_prediction_tracker.py -> prediction_tracker.json,
+   one row per game; every summary here is computed from the rows so the
+   team / conference filters apply to all of it). Live seasons only.
+   ================================================================ */
+var PT_DATA = null, ptLoaded = false, ptFilter = "all", ptShown = 100, ptConf = "", ptTeamSel = "", ptQuery = "";
+function ptLoad() {
+  if (ptLoaded) return;
+  ptLoaded = true;
+  fetch(dataUrl("prediction_tracker.json"))
+    .then(function(r){ if (!r.ok) throw new Error(); return r.json(); })
+    .then(function(d){
+      d.rows = d.games.map(function(row){ var g = {}; d.cols.forEach(function(c, i){ g[c] = row[i]; }); return g; });
+      PT_DATA = d;
+    })
+    .catch(function(){ PT_DATA = { rows: [], missing: true }; })
+    .then(function(){ if (activePage === "predTracker") renderPredTracker(); });
+}
+function ptName(abbr) { return _logoMap[abbr] || abbr; }
+function ptTeam(abbr) {
+  var logo = ppLogoImg(abbr, 16);
+  return '<a href="javascript:void(0)" onclick="goToTeamPage(\'' + abbr.replace(/'/g, "\\'") + '\')" style="color:var(--text);text-decoration:none;white-space:nowrap">' +
+    (logo ? logo + ' ' : '') + ptName(abbr) + '</a>';
+}
+function ptTodayET() {
+  var p = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+  return p.slice(0, 10);
+}
+/* Our pick against the spread: home margin we predict vs the market's (-line).
+   -> "home" / "away" / null (no line, or exactly on it) */
+function ptSpreadPick(homePts, awayPts, line) {
+  if (line == null) return null;
+  var edge = homePts - awayPts + line;
+  return edge > 0 ? "home" : edge < 0 ? "away" : null;
+}
+function ptGrade(g) {
+  var m = g.home_score - g.away_score, pm = g.home_pts - g.away_pts;
+  var r = { right: (pm > 0) === (m > 0), miss: Math.abs(m - pm), totMiss: Math.abs(g.home_score + g.away_score - g.home_pts - g.away_pts), ats: null, ou: null };
+  var pick = ptSpreadPick(g.home_pts, g.away_pts, g.line);
+  if (pick) {
+    var cover = m + g.line;
+    r.ats = cover === 0 ? "P" : ((cover > 0) === (pick === "home") ? "W" : "L");
+  }
+  if (g.ou != null) {
+    var ourT = g.home_pts + g.away_pts, act = g.home_score + g.away_score;
+    if (ourT !== g.ou) r.ou = act === g.ou ? "P" : ((act > g.ou) === (ourT > g.ou) ? "W" : "L");
+  }
+  return r;
+}
+function ptStats(rows) {
+  var s = { games: rows.length, correct: 0, miss: 0, totMiss: 0, brier: 0, ats: { W: 0, L: 0, P: 0 }, ou: { W: 0, L: 0, P: 0 } };
+  rows.forEach(function(g) {
+    var r = g._r || (g._r = ptGrade(g));
+    s.correct += r.right; s.miss += r.miss; s.totMiss += r.totMiss;
+    s.brier += Math.pow(g.home_win - (g.home_score > g.away_score ? 1 : 0), 2);
+    if (r.ats) s.ats[r.ats]++;
+    if (r.ou) s.ou[r.ou]++;
+  });
+  if (s.games) { s.miss /= s.games; s.totMiss /= s.games; s.brier /= s.games; }
+  return s;
+}
+function ptRecord(rec) {
+  var n = rec.W + rec.L;
+  return { txt: rec.W + "–" + rec.L + (rec.P ? "–" + rec.P : ""), pct: n ? (100 * rec.W / n).toFixed(1) + "%" : "–" };
+}
+function ptTrendSvg(rows) {
+  var byDate = {};
+  rows.forEach(function(g){ (byDate[g.date] = byDate[g.date] || []).push(g); });
+  var dates = Object.keys(byDate).sort(), n = 0, c = 0, pts = [];
+  dates.forEach(function(d){ byDate[d].forEach(function(g){ n++; c += g._r.right; }); if (n >= 30) pts.push({ date: d, v: 100 * c / n }); });
+  if (pts.length < 2) return "";
+  var W = 640, H = 150, L = 34, R = 8, T = 10, B = 22;
+  var vals = pts.map(function(p){ return p.v; });
+  var lo = Math.floor(Math.min.apply(null, vals) / 5) * 5, hi = Math.ceil(Math.max.apply(null, vals) / 5) * 5;
+  if (hi - lo < 10) lo = Math.max(0, hi - 10);
+  var x = function(i){ return L + (W - L - R) * i / (pts.length - 1); };
+  var y = function(v){ return T + (H - T - B) * (hi - v) / (hi - lo); };
+  var line = pts.map(function(p, i){ return (i ? "L" : "M") + x(i).toFixed(1) + "," + y(p.v).toFixed(1); }).join("");
+  var grid = "";
+  for (var v = lo; v <= hi; v += 5)
+    grid += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="var(--border)" stroke-width="1"/>' +
+            '<text x="' + (L - 4) + '" y="' + (y(v) + 3) + '" text-anchor="end" font-size="10" fill="var(--text-dim)">' + v + '%</text>';
+  var months = "", lastM = "";
+  pts.forEach(function(p, i){
+    var m = p.date.slice(0, 7);
+    if (m !== lastM) { lastM = m;
+      months += '<text x="' + x(i) + '" y="' + (H - 6) + '" font-size="10" fill="var(--text-dim)">' +
+        new Date(p.date + "T12:00:00").toLocaleDateString("en-US", { month: "short" }) + '</text>'; }
+  });
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;max-width:' + W + 'px;height:auto;display:block">' + grid + months +
+    '<path d="' + line + '" fill="none" stroke="var(--accent)" stroke-width="2"/></svg>';
+}
+
+/* Today's picks: today's games (ET) from predictions.json -- this morning's
+   numbers, which are what gets locked at tip-off -- or the next game day. */
+function ptTodayStrip() {
+  if (String(getSeason()) !== String(DEFAULT_SEASON)) return "";
+  var games = Object.keys(PREDICTIONS).map(function(k){ return PREDICTIONS[k]; }).filter(function(g){ return g.home_pts != null; });
+  if (!games.length) return "";
+  var today = ptTodayET();
+  var day = games.filter(function(g){ return g.date >= today; }).map(function(g){ return g.date; }).sort()[0];
+  if (!day) return "";
+  var list = games.filter(function(g){ return g.date === day; });
+  var label = day === today ? "Today’s picks" : "Next up: " + new Date(day + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+  var cards = list.map(function(g) {
+    var hFav = g.home_pts >= g.away_pts, fav = hFav ? g.home : g.away;
+    var hi = Math.round(Math.max(g.home_pts, g.away_pts)), lo = Math.round(Math.min(g.home_pts, g.away_pts));
+    if (hi === lo) hi += 1;
+    /* our spread / total next to the market's -- a comparison, not a betting pick */
+    var mkt = "", flag = "";
+    var ourMargin = g.home_pts - g.away_pts, ourTotal = g.home_pts + g.away_pts;
+    var spreadTxt = function(margin) {  /* home margin -> "Duke -3.5" */
+      if (Math.abs(margin) < 0.05) return "PK";
+      return ptName(margin > 0 ? g.home : g.away) + " -" + Math.abs(margin).toFixed(1).replace(/\.0$/, "");
+    };
+    if (g.line != null || g.ou != null) {
+      mkt = '<div style="color:var(--text-dim)">Us: ' + spreadTxt(ourMargin) + ', ' + ourTotal.toFixed(1) + '</div>' +
+            '<div style="color:var(--text-dim)">Market: ' + (g.line != null ? spreadTxt(-g.line) : '\u2013') + (g.ou != null ? ', ' + g.ou : '') + '</div>';
+      var big = [];
+      if (g.line != null && Math.abs(ourMargin + g.line) >= 4) big.push("spread " + Math.abs(ourMargin + g.line).toFixed(1));
+      if (g.ou != null && Math.abs(ourTotal - g.ou) >= 4) big.push("total " + Math.abs(ourTotal - g.ou).toFixed(1));
+      if (big.length) flag = '<div style="color:var(--accent);font-weight:600" title="We disagree with the market by 4+ points">4+ pt disagreement: ' + big.join(", ") + '</div>';
+    }
+    return '<div style="flex:0 0 230px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.78rem;line-height:1.5">' +
+      '<div style="color:var(--text-dim);font-size:.7rem">' + (g.time || "") + (g.neutral ? " · neutral" : "") + '</div>' +
+      '<div>' + ptTeam(g.away) + (g.neutral ? ' <span style="color:var(--text-dim)">vs</span> ' : ' <span style="color:var(--text-dim)">@</span> ') + ptTeam(g.home) + '</div>' +
+      '<div><b>' + ptName(fav) + ' ' + hi + '–' + lo + '</b> <span style="color:var(--text-dim)">(' + Math.round(Math.max(g.home_win, 1 - g.home_win) * 100) + '%)</span></div>' +
+      mkt + flag + '</div>';
+  }).join("");
+  return '<h3 style="font-size:.9rem;margin:4px 0 6px">' + label + ' <span style="font-weight:400;color:var(--text-dim);font-size:.75rem">' + list.length + ' games · locked at tip-off</span></h3>' +
+    '<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px">' + cards + '</div>';
+}
+
+function renderPredTracker() {
+  var el = document.getElementById("ptContent");
+  if (!ptLoaded) { ptLoad(); return; }
+  if (!PT_DATA) return;
+  var intro = '<p class="pre-note" style="margin:0 0 12px">Every game prediction is <b>locked at tip-off</b> — made from the ratings before the game, ' +
+    'using every result through the night before — then graded against the final score and the closing betting line. Later results never change a past prediction.</p>';
+  if (PT_DATA.missing) {
+    el.innerHTML = intro + '<div style="text-align:center;padding:40px;color:var(--text-dim)">Prediction tracking starts with the 2026-27 season — ' +
+      'predictions weren’t being made live before then. <a href="javascript:void(0)" onclick="goToSeason(\'' + DEFAULT_SEASON + '\', \'predTracker\')" style="color:var(--accent)">Go to 2026-27</a></div>';
+    return;
+  }
+  var all = PT_DATA.rows;
+  all.forEach(function(g){ if (!g._r) g._r = ptGrade(g); });
+  var html = intro + ptTodayStrip();
+  if (!all.length) {
+    el.innerHTML = html + '<div style="text-align:center;padding:40px;color:var(--text-dim)">No games graded yet — results show up here the morning after each game day.</div>';
+    return;
+  }
+
+  /* filters: conference, then team */
+  var confs = {}, teams = {};
+  all.forEach(function(g){ if (g.home_conf) confs[g.home_conf] = 1; if (g.away_conf) confs[g.away_conf] = 1; });
+  all.forEach(function(g){
+    if (!ptConf || g.home_conf === ptConf) teams[g.home] = 1;
+    if (!ptConf || g.away_conf === ptConf) teams[g.away] = 1;
+  });
+  if (ptTeamSel && !teams[ptTeamSel]) ptTeamSel = "";
+  var rows = all.filter(function(g){
+    if (ptTeamSel) return g.home === ptTeamSel || g.away === ptTeamSel;
+    if (ptConf) return g.home_conf === ptConf || g.away_conf === ptConf;
+    return true;
+  });
+  html += '<div class="controls" style="padding:0 0 10px;border:none;flex-wrap:wrap">' +
+    '<select id="ptConfSel" class="pre-select"><option value="">All conferences</option>' +
+      Object.keys(confs).sort().map(function(c){ return '<option' + (c === ptConf ? ' selected' : '') + '>' + c + '</option>'; }).join("") + '</select>' +
+    '<select id="ptTeamSel" class="pre-select"><option value="">All teams</option>' +
+      Object.keys(teams).sort(function(a, b){ return ptName(a).localeCompare(ptName(b)); })
+        .map(function(t){ return '<option value="' + t + '"' + (t === ptTeamSel ? ' selected' : '') + '>' + ptName(t) + '</option>'; }).join("") + '</select>' +
+    '<span style="font-size:.75rem;color:var(--text-dim)">' + (ptTeamSel ? 'Games involving ' + ptName(ptTeamSel) : ptConf ? 'Games involving a ' + ptConf + ' team' : 'All D1 vs D1 games') + '</span></div>';
+
+  var sm = ptStats(rows);
+  var card = function(lbl, val, sub) { return '<div class="pre-card"><div class="lbl">' + lbl + '</div><div class="val">' + val + '</div><div class="sub">' + sub + '</div></div>'; };
+  var ats = ptRecord(sm.ats), ou = ptRecord(sm.ou);
+  html += '<div class="pre-cards" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">' +
+    card("Winners picked", sm.games ? (100 * sm.correct / sm.games).toFixed(1) + "%" : "–", sm.correct + "–" + (sm.games - sm.correct) + " of " + sm.games + " games") +
+    card("Against the spread", ats.pct, ats.txt + " vs the closing line \u00b7 50% = as sharp as the market") +
+    card("Over / under", ou.pct, ou.txt + " vs the closing total \u00b7 50% = as sharp as the market") +
+    card("Avg margin miss", sm.games ? sm.miss.toFixed(1) : "–", "points per game") +
+    card("Avg total miss", sm.games ? sm.totMiss.toFixed(1) : "–", "combined points") +
+    card("Brier score", sm.games ? sm.brier.toFixed(3) : "–", "win prob. accuracy (coin flip 0.250)") +
+    '</div>';
+
+  /* calibration + by month */
+  var buckets = [[.5, .6], [.6, .7], [.7, .8], [.8, .9], [.9, 1.01]];
+  var calRows = buckets.map(function(b){
+    var sel = rows.filter(function(g){ var f = Math.max(g.home_win, 1 - g.home_win); return f >= b[0] && f < b[1]; });
+    if (!sel.length) return "";
+    var pred = sel.reduce(function(s, g){ return s + Math.max(g.home_win, 1 - g.home_win); }, 0) / sel.length * 100;
+    var act = sel.filter(function(g){ return (g.home_win >= .5) === (g.home_score > g.away_score); }).length / sel.length * 100;
+    var diff = act - pred;
+    return '<tr><td style="text-align:left">' + Math.round(b[0] * 100) + '–' + Math.min(100, Math.round(b[1] * 100)) + '%</td><td style="text-align:center">' + sel.length +
+      '</td><td style="text-align:center">' + pred.toFixed(1) + '%</td><td style="text-align:center">' + act.toFixed(1) + '% <span style="font-size:.7rem;color:' +
+      (Math.abs(diff) < 3 || sel.length < 30 ? 'var(--text-dim)' : diff > 0 ? 'var(--green)' : 'var(--red)') + '">(' + (diff >= 0 ? '+' : '') + diff.toFixed(1) + ')</span></td></tr>';
+  }).join("");
+  var months = {};
+  rows.forEach(function(g){ (months[g.date.slice(0, 7)] = months[g.date.slice(0, 7)] || []).push(g); });
+  var monthRows = Object.keys(months).sort().map(function(m){
+    var s = ptStats(months[m]), a = ptRecord(s.ats);
+    return '<tr><td style="text-align:left">' + new Date(m + "-15T12:00:00").toLocaleDateString("en-US", { month: "long" }) + '</td><td style="text-align:center">' + s.games +
+      '</td><td style="text-align:center">' + (100 * s.correct / s.games).toFixed(1) + '%</td><td style="text-align:center">' + a.pct +
+      '</td><td style="text-align:center">' + s.miss.toFixed(1) + '</td></tr>';
+  }).join("");
+  /* When we disagree with the line: record of the side our numbers favor,
+     both teams 5+ games in (earlier predictions are much noisier --
+     backtest_vs_lines.py) */
+  var settled = rows.filter(function(g){ return g.min_gp >= 5; });
+  var disRow = function(label, market, e) {
+    var res = [];
+    settled.forEach(function(g) {
+      var edge, out;
+      if (market === "spread") { if (g.line == null) return; edge = g.home_pts - g.away_pts + g.line; out = g.home_score - g.away_score + g.line; }
+      else { if (g.ou == null) return; edge = g.home_pts + g.away_pts - g.ou; out = g.home_score + g.away_score - g.ou; }
+      if (Math.abs(edge) < e) return;
+      res.push(out === 0 ? "P" : ((out > 0) === (edge > 0) ? "W" : "L"));
+    });
+    var rec = { W: 0, L: 0, P: 0 };
+    res.forEach(function(r){ rec[r]++; });
+    var r = ptRecord(rec);
+    return '<tr><td style="text-align:left">' + label + '</td><td style="text-align:center">' + (rec.W + rec.L) + '</td><td style="text-align:center">' + r.txt +
+      '</td><td style="text-align:center">' + r.pct + '</td></tr>';
+  };
+  var disTable = '<div style="flex:1 1 320px"><h3 style="font-size:.9rem;margin:6px 0">When we disagree with the line</h3>' +
+    '<table><thead><tr><th style="text-align:left">Disagreement</th><th>Games</th><th>Record</th><th>Win %</th></tr></thead><tbody>' +
+    disRow("Spread by 4+ pts", "spread", 4) + disRow("Spread by 8+ pts", "spread", 8) +
+    disRow("Total by 4+ pts", "total", 4) + disRow("Total by 8+ pts", "total", 8) +
+    '</tbody></table><p class="pre-note" style="margin:6px 0 0">The side our numbers favor, vs the closing line, once both teams have played 5+ games. ' +
+    'Tracked to see whether big disagreements hold up \u2014 not betting picks: in replays of the last two seasons they were within normal luck of 50%.</p></div>';
+
+  html += '<div style="display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 14px">' + disTable +
+    '<div style="flex:1 1 320px"><h3 style="font-size:.9rem;margin:6px 0">Are the win probabilities honest?</h3><table><thead><tr><th style="text-align:left">Favorite given</th>' +
+    '<th>Games</th><th>Predicted</th><th>Actually won</th></tr></thead><tbody>' + calRows + '</tbody></table></div>' +
+    '<div style="flex:1 1 320px"><h3 style="font-size:.9rem;margin:6px 0">By month</h3><table><thead><tr><th style="text-align:left">Month</th><th>Games</th>' +
+    '<th>Winners</th><th>ATS</th><th>Margin miss</th></tr></thead><tbody>' + monthRows + '</tbody></table></div></div>';
+  var svg = ptTrendSvg(rows);
+  if (svg) html += '<h3 style="font-size:.9rem;margin:6px 0">Season-to-date winners picked</h3>' + svg;
+
+  /* game list */
+  html += '<h3 style="font-size:.9rem;margin:16px 0 6px">Every game</h3>' +
+    '<div class="controls" style="padding:0 0 8px;border:none;flex-wrap:wrap">' +
+    '<input type="text" id="ptSearch" placeholder="Search team..." style="width:200px">' +
+    ['all:All', 'right:Called it', 'wrong:Missed', 'atsw:Won ATS', 'atsl:Lost ATS', 'upsets:Upsets (favorite 75%+ lost)', 'close:Closest calls'].map(function(o){
+      var k = o.split(":")[0];
+      return '<button class="pt-filter" data-f="' + k + '" style="background:' + (ptFilter === k ? 'var(--accent)' : 'var(--surface)') + ';color:' +
+        (ptFilter === k ? '#fff' : 'var(--text)') + ';border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:.78rem;cursor:pointer">' + o.split(":")[1] + '</button>';
+    }).join("") + '<span id="ptCount" class="row-count" style="margin-left:auto"></span></div>' +
+    '<div style="overflow-x:auto"><table><thead><tr><th style="text-align:left">Date</th><th style="text-align:left">Matchup</th>' +
+    '<th style="text-align:left">Prediction</th><th>Win prob</th><th style="text-align:left">Line</th><th style="text-align:left">Final</th><th>Winner</th><th>ATS</th><th>Margin miss</th></tr></thead>' +
+    '<tbody id="ptBody"></tbody></table></div><div id="ptMore" style="text-align:center;margin:10px"></div>';
+  el.innerHTML = html;
+  el._rows = rows;
+  document.getElementById("ptSearch").value = ptQuery;
+  document.getElementById("ptSearch").addEventListener("input", function(){ ptQuery = this.value; ptShown = 100; ptRenderRows(); });
+  document.getElementById("ptConfSel").addEventListener("change", function(){ ptConf = this.value; ptTeamSel = ""; ptShown = 100; renderPredTracker(); });
+  document.getElementById("ptTeamSel").addEventListener("change", function(){ ptTeamSel = this.value; ptShown = 100; renderPredTracker(); });
+  el.querySelectorAll(".pt-filter").forEach(function(b){ b.addEventListener("click", function(){ ptFilter = b.dataset.f; ptShown = 100; renderPredTracker(); }); });
+  ptRenderRows();
+}
+function ptRenderRows() {
+  var q = ptQuery.toLowerCase();
+  var rows = document.getElementById("ptContent")._rows.filter(function(g){
+    var r = g._r, fav = Math.max(g.home_win, 1 - g.home_win);
+    if (ptFilter === "right" && !r.right) return false;
+    if (ptFilter === "wrong" && r.right) return false;
+    if (ptFilter === "atsw" && r.ats !== "W") return false;
+    if (ptFilter === "atsl" && r.ats !== "L") return false;
+    if (ptFilter === "upsets" && (r.right || fav < 0.75)) return false;
+    if (q && (g.home + " " + g.away + " " + ptName(g.home) + " " + ptName(g.away)).toLowerCase().indexOf(q) < 0) return false;
+    return true;
+  });
+  if (ptFilter === "close") rows = rows.slice().sort(function(a, b){ return a._r.miss - b._r.miss; });
+  if (ptFilter === "upsets") rows = rows.slice().sort(function(a, b){ return Math.max(b.home_win, 1 - b.home_win) - Math.max(a.home_win, 1 - a.home_win); });
+  document.getElementById("ptCount").textContent = rows.length.toLocaleString() + " games";
+  var mark = function(v){ return v === "W" ? '<span style="color:var(--green)">✓</span>' : v === "L" ? '<span style="color:var(--red)">✗</span>' : v === "P" ? '<span style="color:var(--text-dim)">push</span>' : '<span style="color:var(--text-dim)">–</span>'; };
+  document.getElementById("ptBody").innerHTML = rows.slice(0, ptShown).map(function(g){
+    var hFav = g.home_pts >= g.away_pts, favAbbr = hFav ? g.home : g.away;
+    var fHi = Math.round(Math.max(g.home_pts, g.away_pts)), fLo = Math.round(Math.min(g.home_pts, g.away_pts));
+    if (fHi === fLo) fHi += 1;
+    var wAbbr = g.home_score > g.away_score ? g.home : g.away;
+    var lineTxt = g.line == null ? "–" : g.line === 0 ? "PK" : ptName(g.line < 0 ? g.home : g.away) + " " + (-Math.abs(g.line));
+    var dt = new Date(g.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    return '<tr><td style="text-align:left;white-space:nowrap">' + dt + '</td>' +
+      '<td style="text-align:left">' + ptTeam(g.away) + (g.neutral ? ' <span style="color:var(--text-dim)">vs</span> ' : ' <span style="color:var(--text-dim)">@</span> ') + ptTeam(g.home) + '</td>' +
+      '<td style="text-align:left;white-space:nowrap">' + ptName(favAbbr) + ' ' + fHi + '–' + fLo + '</td>' +
+      '<td style="text-align:center">' + Math.round(Math.max(g.home_win, 1 - g.home_win) * 100) + '%</td>' +
+      '<td style="text-align:left;white-space:nowrap;color:var(--text-dim)">' + lineTxt + '</td>' +
+      '<td style="text-align:left;white-space:nowrap"><a href="javascript:void(0)" onclick="goToBoxScore(\'' + g.game_id + '\')" style="color:var(--text);text-decoration:none">' +
+        ptName(wAbbr) + ' ' + Math.max(g.home_score, g.away_score) + '–' + Math.min(g.home_score, g.away_score) + '</a></td>' +
+      '<td style="text-align:center">' + mark(g._r.right ? "W" : "L") + '</td><td style="text-align:center">' + mark(g._r.ats) + '</td>' +
+      '<td style="text-align:center">' + g._r.miss.toFixed(1) + '</td></tr>';
+  }).join("") || '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-dim)">No games match.</td></tr>';
+  var more = document.getElementById("ptMore");
+  more.innerHTML = rows.length > ptShown ? '<button style="background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 14px;cursor:pointer">Show more</button>' : "";
+  if (rows.length > ptShown) more.firstChild.onclick = function(){ ptShown += 200; ptRenderRows(); };
 }
 
 /* ================================================================
@@ -6989,7 +8375,7 @@ function renderGamePreview() {
   /* ── WAB Impact ── */
   var allTeamArr = []; DATA.forEach(function(t){ allTeamArr.push(t); });
   var sortedSrs = allTeamArr.map(function(t){ return t.net_srs; }).filter(function(v){ return v != null; }).sort(function(a, b){ return b - a; });
-  var bubbleSlice = sortedSrs.slice(34, 55);
+  var bubbleSlice = sortedSrs.slice(34 + bubbleShift(), 55 + bubbleShift());
   var bubbleEM = bubbleSlice.length ? bubbleSlice.reduce(function(s, v){ return s + v; }, 0) / bubbleSlice.length : 0;
 
   html += '<div class="gp-section"><div class="gp-section-title">WAB Impact</div>';
@@ -7170,7 +8556,7 @@ function renderBoxScore(gameId) {
   if (bsCache[gameId]) { bsBuild(bsCache[gameId], container); return; }
 
   container.innerHTML = '<div style="color:var(--text-dim);text-align:center;padding:48px;">Loading box score...</div>';
-  fetch("box/" + gameId + ".json")
+  fetch(dataUrl("box/" + gameId + ".json"))
     .then(function(r) { if (!r.ok) throw new Error("Box score not found"); return r.json(); })
     .then(function(data) { bsCache[gameId] = data; bsBuild(data, container); })
     .catch(function(e) { container.innerHTML = '<div style="color:var(--red);text-align:center;padding:48px;">'+e.message+'</div>'; });
@@ -7217,8 +8603,10 @@ function bsBuild(data, container) {
   if (a.adj_de != null) html += qsStat(a.abbr + " Adj DE", a.adj_de.toFixed(1));
   html += '</div>';
 
-  /* ── Win Probability Chart ── */
-  html += '<div class="bs-section"><h3>Win Probability</h3><div id="bsWpChart" style="width:100%;height:250px;position:relative;"></div></div>';
+  /* ── Win Probability Chart ── (only with real play-by-play: a handful of
+     games have just the tip and the final, which would draw a straight line) */
+  var hasPbp = data.wp && data.wp.length >= 10;
+  if (hasPbp) html += '<div class="bs-section"><h3>Win Probability</h3><div id="bsWpChart" style="width:100%;height:250px;position:relative;"></div></div>';
 
   /* ── Four Factors Comparison ── */
   html += '<div class="bs-section"><h3>Four Factors</h3>';
@@ -7245,7 +8633,8 @@ function bsBuild(data, container) {
     html += '</div></div>';
   }
 
-  /* ── Game Flow: Lead Changes, Ties, Largest Leads ── */
+  /* ── Game Flow: Lead Changes, Ties, Largest Leads ── (needs play-by-play too) */
+  if (hasPbp) {
   html += '<div class="bs-section"><h3>Game Flow</h3><div class="bs-quick-stats">';
   html += qsStat("Lead Changes", data.lead_changes || 0);
   html += qsStat(h.abbr + " Largest Lead", (data.largest_lead||{}).home || 0);
@@ -7282,11 +8671,12 @@ function bsBuild(data, container) {
     html += '</div>';
   }
   html += '</div>';
+  }
 
   container.innerHTML = html;
 
   /* Draw WP chart after DOM is ready */
-  setTimeout(function() { bsDrawWpChart(data); }, 30);
+  if (hasPbp) setTimeout(function() { bsDrawWpChart(data); }, 30);
 }
 
 function bsFourFactors(h, a) {
@@ -7616,7 +9006,7 @@ function ppDrawShotChart() {
   var bw2 = bandwidth * bandwidth;
 
   shots.forEach(function(s) {
-    var px = cx(s[0]), py = cy(s[1] + 5.25); /* offset Y to align with court (hoop at data Y≈0) */
+    var px = cx(s[0]), py = cy(s[1]); /* shot y is baseline-relative real feet, same as the court geometry above -- no offset needed */
     var c0 = Math.max(0, Math.floor((px - bandwidth * 2.5) / gridStep));
     var c1 = Math.min(cols - 1, Math.ceil((px + bandwidth * 2.5) / gridStep));
     var r0 = Math.max(0, Math.floor((py - bandwidth * 2.5) / gridStep));
@@ -7825,7 +9215,7 @@ function ppRenderFreqBars() {
   var shots = allShots.filter(function(s) { return s[3] !== 1; });
   if (!shots.length) { el.innerHTML = '<p style="color:var(--text-dim);font-size:.82em">No shot data</p>'; return; }
 
-  var hoopX = 25, hoopY = 0;
+  var hoopX = 25, hoopY = 5.25; /* real rim position, baseline-relative -- shot y is already in that convention */
   var distBins = [
     { label: "0-3 ft",   min: 0,  max: 3 },
     { label: "3-10 ft",  min: 3,  max: 10 },
@@ -8182,7 +9572,11 @@ function renderBpop() {
 document.getElementById("bpopSearchBox").addEventListener("input", renderBpop);
 
 function renderTimeoutAnalysis() {
-  if (!TIMEOUT_DATA.length) return;
+  if (!TIMEOUT_DATA.length) {
+    document.getElementById("toTbody").innerHTML = '<tr><td colspan="20" style="text-align:center;color:var(--text-dim);padding:24px">' +
+      'Timeout analysis starts once games are played this season.</td></tr>';
+    return;
+  }
   _toBuildConfMap();
   var tbody = document.getElementById("toTbody");
   var search = (document.getElementById("toSearchBox").value || "").toLowerCase();
@@ -8281,13 +9675,14 @@ if (_ppTrendsSel) _ppTrendsSel.addEventListener("change", function() { ppDrawTre
       if (parts[i].indexOf("game=")===0) { bsCurrentGameId = decodeURIComponent(parts[i].substring(5)); }
       if (parts[i].indexOf("matchup=")===0) { gpCurrentMatchup = decodeURIComponent(parts[i].substring(8)); }
       if (parts[i].indexOf("conf=")===0) { confDetailName = decodeURIComponent(parts[i].substring(5)); }
+      if (parts[i].indexOf("date=")===0) { gameRequestedDate = decodeURIComponent(parts[i].substring(5)); }
     }
   }
   var teamPages = ["rank","advOff","advDef"];
   var brackPages = ["sheets","quad","compare","brack","bubble","seedOdds","seedHistory"];
   var tpPages = ["tpOverview","tpRoster","tpGameLog","tpResumeSim","tpTrends"];
   var ppPages = ["players","ppPage"];
-  var gamePages = ["gameResults","boxScore","gamePreview"];
+  var gamePages = ["gameResults","boxScore","gamePreview","predTracker"];
   if (teamPages.indexOf(activePage) >= 0) { document.getElementById("subTeamRatings").classList.add("open"); document.getElementById("expandTeam").classList.add("open"); }
   if (brackPages.indexOf(activePage) >= 0) { document.getElementById("subBracketology").classList.add("open"); document.getElementById("expandBrack").classList.add("open"); }
   if (tpPages.indexOf(activePage) >= 0) { document.getElementById("subTeamPage").classList.add("open"); document.getElementById("expandTeam2").classList.add("open"); }

@@ -1,0 +1,38 @@
+[
+  {
+    "season": 2022,
+    "label": "2021-22",
+    "team_pages": true,
+    "player_pages": false
+  },
+  {
+    "season": 2023,
+    "label": "2022-23",
+    "team_pages": true,
+    "player_pages": false
+  },
+  {
+    "season": 2024,
+    "label": "2023-24",
+    "team_pages": true,
+    "player_pages": true
+  },
+  {
+    "season": 2025,
+    "label": "2024-25",
+    "team_pages": true,
+    "player_pages": true
+  },
+  {
+    "season": 2026,
+    "label": "2025-26",
+    "team_pages": true,
+    "player_pages": true
+  },
+  {
+    "season": 2027,
+    "label": "2026-27",
+    "team_pages": true,
+    "player_pages": false
+  }
+]
