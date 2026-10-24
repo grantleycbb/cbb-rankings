@@ -1211,7 +1211,6 @@ footer {
   <!-- ===== WELCOME PANEL ===== -->
   <div class="panel active" id="panelWelcome">
     <div class="welcome-panel">
-      <h2 id="dashWelcomeTitle">Welcome to grantley cbb</h2>
       <div class="dash-outer" id="dashOuter">
         <div class="dash-left">
           <div class="dash-grid" id="dashGrid">
@@ -4165,9 +4164,6 @@ function renderWelcomeDashboard() {
   if (yesterday) {
     var yd = new Date(yesterday + "T12:00:00");
     fmtDate = yd.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-    var fmtFull = yd.toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" });
-    var titleEl = document.getElementById("dashWelcomeTitle");
-    if (titleEl) titleEl.textContent = "Welcome to grantley cbb - Updated through " + fmtFull;
   }
 
   /* ── Build yesterday's game rows (deduplicated) ── */
