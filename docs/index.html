@@ -728,6 +728,8 @@ footer {
 .blog-post ul, .blog-post ol { margin-left:2em; margin-bottom:1em; }
 .blog-post li { margin-bottom:.3em; }
 .blog-post p { line-height:1.6; margin-bottom:.8em; }
+.blog-post img { max-width:100%; height:auto; }  /* posts set width=; shrink to fit phones */
+.blog-post figure { margin:1em 0; }
 .blog-post ul.dash-list { margin-left:5em; margin-top:.6em; }
 
 /* ── Team Page panel ── */
@@ -4793,6 +4795,7 @@ var _gameResultsInited = false;
    ================================================================ */
 var _blogLoaded = false;
 var BLOG_POST_FILES = [
+  'posts/2026-10-26-new-season.md',
   'posts/2026-02-26-compare.md',
   'posts/2026-02-20-welcome.md'
 ];
