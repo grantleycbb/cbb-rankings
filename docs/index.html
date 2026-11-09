@@ -4160,7 +4160,11 @@ function renderWelcomeDashboard() {
       if (g.date) playedDates[g.date] = 1;
     });
   });
-  var sortedPlayed = Object.keys(playedDates).sort();
+  /* today's date in US Eastern (game dates are Eastern): a game that already
+     finished today (an early tip, picked up by a midday update) must not
+     make today look like "yesterday". Past seasons: latest played date. */
+  var etToday = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+  var sortedPlayed = Object.keys(playedDates).sort().filter(function(d) { return d < etToday; });
   var yesterday = sortedPlayed[sortedPlayed.length - 1] || "";
   var fmtDate = "";
   if (yesterday) {
@@ -4388,7 +4392,9 @@ function renderWelcomeDashboard() {
       nd.setDate(nd.getDate() + 1);
       nextDay = nd.getFullYear() + "-" + String(nd.getMonth() + 1).padStart(2, "0") + "-" + String(nd.getDate()).padStart(2, "0");
     }
-    var today = (nextDay && SCHED_BY_DATE[nextDay]) ? nextDay : (futureDates[0] || "");
+    var today = SCHED_BY_DATE[etToday] ? etToday
+      : (nextDay && SCHED_BY_DATE[nextDay]) ? nextDay
+      : (futureDates.filter(function(d) { return d >= etToday; })[0] || futureDates[0] || "");
     if (!today) {
       todayEl.innerHTML = '<h3>&#128197; Upcoming Games</h3><p class="dash-empty">No upcoming games scheduled</p>';
     } else {
