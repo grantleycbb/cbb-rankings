@@ -751,6 +751,7 @@ footer {
 .tp-splits-table th { background:var(--surface); border-bottom:2px solid var(--border); padding:6px 7px; font-size:.7rem; text-transform:uppercase; color:var(--text-dim); white-space:nowrap; }
 .tp-splits-table td { padding:5px 7px; border-bottom:1px solid var(--border); text-align:center; white-space:nowrap; }
 .win { color:var(--green); font-weight:600; }
+.conf-tag { display:inline-block; font-size:.6rem; font-weight:700; letter-spacing:.03em; color:var(--text-dim); border:1px solid var(--border); border-radius:4px; padding:0 4px; margin-left:5px; vertical-align:1px; }
 .loss { color:var(--red); font-weight:600; }
 .net-pos { color:var(--green); }
 .net-neg { color:var(--red); }
@@ -5331,6 +5332,12 @@ function themeColor(varName) {
   return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
 }
 
+/* Official conference game (the schedule's flag): same-league teams meeting
+   in an early-season event don't count, so it isn't "same conference". */
+function confTag(g) {
+  return g && (g.conferenceGame === true || g.conferenceGame === "True")
+    ? ' <span class="conf-tag" title="Conference game: counts in the conference record">CONF</span>' : '';
+}
 /* Column definitions for game log */
 var TP_SHARED_COLS = [
   { key: "date", label: "Date", fmt: function(v){return v;}, align: "left" },
@@ -5650,7 +5657,7 @@ function tpRenderOverview(wins, losses) {
     var oppName = g.opp_team_displayName || g.opp_team_abbr || "\u2013";
     var oppLink = oppAbbr ? '<a href="#" onclick="goToTeamPage(\''+oppAbbr+'\');return false;" style="color:var(--accent);text-decoration:none;">'+(g.homeAway==="away"?"@ ":"")+oppName+'</a>' : (g.homeAway==="away"?"@ ":"")+oppName;
     var resultLink = g.game_id ? '<a href="javascript:void(0)" onclick="goToBoxScore(\''+g.game_id+'\')" style="text-decoration:none">'+g._result+'</a>' : g._result;
-    return "<tr><td>"+dateLink+"</td><td style='text-align:left'>"+oppLink
+    return "<tr><td>"+dateLink+"</td><td style='text-align:left'>"+oppLink+confTag(g)
       +"</td><td class='"+resCls+"'>"+resultLink+"</td><td class='"+qCls+"'>"+(g._netQuad?"Q"+g._netQuad:"\u2013")+"</td></tr>";
   }).join("");
 
@@ -5691,7 +5698,7 @@ function tpRenderOverview(wins, losses) {
         winCell = Math.round(pr.win * 100) + "%";
         winCls = pr.win >= 0.5 ? "net-pos" : "net-neg";
       }
-      return "<tr><td>"+dateDisp+"</td><td style='text-align:left'>"+oppLinkU
+      return "<tr><td>"+dateDisp+"</td><td style='text-align:left'>"+oppLinkU+confTag(g)
         +"</td><td>"+loc+"</td><td class='"+qCls+"'>"+(quad?"Q"+quad:"\u2013")+"</td><td>"+predCell
         +"</td><td class='"+winCls+"' style='font-weight:600'>"+winCell+"</td></tr>";
     }).join("");
@@ -5974,7 +5981,7 @@ function tpRenderGameLog() {
       if (c.sectionEnd) cls += " section-end";
       if (c.key==="opp_team_displayName" && g.opp_team_abbr) {
         var shortOpp = _logoMap[g.opp_team_abbr] || display;
-        display = '<a href="#tpOverview" data-tp-team="'+g.opp_team_abbr+'" style="color:var(--accent);text-decoration:none"><span class="full-name">'+display+'</span><span class="short-name">'+shortOpp+'</span></a>';
+        display = '<a href="#tpOverview" data-tp-team="'+g.opp_team_abbr+'" style="color:var(--accent);text-decoration:none"><span class="full-name">'+display+'</span><span class="short-name">'+shortOpp+'</span></a>' + confTag(g);
         cls += " sticky-col";
       }
       if (c.key==="date" && g.date) {
@@ -7553,7 +7560,16 @@ function loadPlayerPage(playerId) {
       return '\u2013';
     }
 
-    var confGames = gameLogs.filter(function(g) { return confTeams[g.opp_abbr]; });
+    /* conference games per the official flag on the team's games (by game id);
+       same-conference opponent if the team's games aren't loaded */
+    var teamGameConf = {};
+    ((typeof GAMES_DATA !== 'undefined' && GAMES_DATA[teamAbbr]) || []).forEach(function(tg) {
+      if (tg.conferenceGame !== undefined) teamGameConf[String(tg.game_id)] = tg.conferenceGame === true || tg.conferenceGame === "True";
+    });
+    var confGames = gameLogs.filter(function(g) {
+      var k = String(g.game_id);
+      return k in teamGameConf ? teamGameConf[k] : confTeams[g.opp_abbr];
+    });
     var homeGames = gameLogs.filter(function(g) { return g.loc === 'home'; });
     var awayGames = gameLogs.filter(function(g) { return g.loc !== 'home'; });
 
