@@ -7747,7 +7747,22 @@ function ptTrendSvg(rows) {
 }
 
 /* Today's picks: today's games (ET) from predictions.json -- this morning's
-   numbers, which are what gets locked at tip-off -- or the next game day. */
+   numbers, which are what gets locked at tip-off -- or the next game day.
+   A compact table: filter to games where we disagree with the market by
+   4+ / 8+ / 10+ points, sort by tip time or by the size of the disagreement.
+   "early" marks games where a team has played fewer than 5 games -- the
+   tracker's disagreement table doesn't count those. */
+var ptTodayMin = 0, ptTodaySort = "time";
+function ptTodaySet(k, v) {
+  if (k === "min") ptTodayMin = v; else ptTodaySort = v;
+  var el = document.getElementById("ptToday");
+  if (el) el.outerHTML = ptTodayStrip();
+}
+function ptTipMinutes(t) {  /* "7:30 PM ET" -> minutes after midnight; no time -> last */
+  var m = /(\d+):(\d+)\s*(AM|PM)/i.exec(t || "");
+  if (!m) return 99999;
+  return (parseInt(m[1], 10) % 12 + (m[3].toUpperCase() === "PM" ? 12 : 0)) * 60 + parseInt(m[2], 10);
+}
 function ptTodayStrip() {
   if (String(getSeason()) !== String(DEFAULT_SEASON)) return "";
   var games = Object.keys(PREDICTIONS).map(function(k){ return PREDICTIONS[k]; }).filter(function(g){ return g.home_pts != null; });
@@ -7755,35 +7770,85 @@ function ptTodayStrip() {
   var today = ptTodayET();
   var day = games.filter(function(g){ return g.date >= today; }).map(function(g){ return g.date; }).sort()[0];
   if (!day) return "";
-  var list = games.filter(function(g){ return g.date === day; });
   var label = day === today ? "Today’s picks" : "Next up: " + new Date(day + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
-  var cards = list.map(function(g) {
-    var hFav = g.home_pts >= g.away_pts, fav = hFav ? g.home : g.away;
+  var played = function(abbr) {
+    return (GAMES_DATA[abbr] || []).filter(function(x){ return x.date < day; }).length;
+  };
+  var list = games.filter(function(g){ return g.date === day; }).map(function(g) {
+    var m = g.home_pts - g.away_pts, t = g.home_pts + g.away_pts;
+    var sEdge = g.line != null ? m + g.line : null, tEdge = g.ou != null ? t - g.ou : null;
+    return { g: g, m: m, t: t, sEdge: sEdge, tEdge: tEdge,
+             edge: Math.max(sEdge != null ? Math.abs(sEdge) : 0, tEdge != null ? Math.abs(tEdge) : 0),
+             early: Math.min(played(g.home), played(g.away)) < 5, tip: ptTipMinutes(g.time) };
+  });
+  var total = list.length;
+  if (ptTodayMin) list = list.filter(function(r){ return r.edge >= ptTodayMin; });
+  list.sort(ptTodaySort === "edge"
+    ? function(a, b){ return b.edge - a.edge || a.tip - b.tip; }
+    : function(a, b){ return a.tip - b.tip || b.edge - a.edge; });
+
+  var fmt = function(v){ return v.toFixed(1).replace(/\.0$/, ""); };
+  var signed = function(v){ return (v > 0 ? "+" : "") + fmt(v); };
+  /* spread columns use abbreviations (full names are in the matchup column) */
+  var spreadTxt = function(g, margin) {  /* home margin -> "DUKE -3.5" */
+    if (Math.abs(margin) < 0.05) return "PK";
+    return (margin > 0 ? g.home : g.away) + " -" + fmt(Math.abs(margin));
+  };
+  var dim = 'style="color:var(--text-dim)"';
+  var diffCell = function(e, sideTxt) {
+    if (e == null) return '<td style="text-align:center;color:var(--text-dim)">–</td>';
+    var a = Math.abs(e);
+    var style = a >= 8 ? "color:var(--accent);font-weight:700" : a >= 4 ? "color:var(--accent)" : "color:var(--text-dim)";
+    return '<td style="text-align:center;' + style + '">' + fmt(a) +
+      (a >= 4 ? ' <span style="font-size:.68rem;font-weight:600">' + sideTxt + '</span>' : '') + '</td>';
+  };
+  var rowsHtml = list.map(function(r) {
+    var g = r.g;
+    var fav = r.m >= 0 ? g.home : g.away;
     var hi = Math.round(Math.max(g.home_pts, g.away_pts)), lo = Math.round(Math.min(g.home_pts, g.away_pts));
     if (hi === lo) hi += 1;
-    /* our spread / total next to the market's -- a comparison, not a betting pick */
-    var mkt = "", flag = "";
-    var ourMargin = g.home_pts - g.away_pts, ourTotal = g.home_pts + g.away_pts;
-    var spreadTxt = function(margin) {  /* home margin -> "Duke -3.5" */
-      if (Math.abs(margin) < 0.05) return "PK";
-      return ptName(margin > 0 ? g.home : g.away) + " -" + Math.abs(margin).toFixed(1).replace(/\.0$/, "");
-    };
-    if (g.line != null || g.ou != null) {
-      mkt = '<div style="color:var(--text-dim)">Us: ' + spreadTxt(ourMargin) + ', ' + ourTotal.toFixed(1) + '</div>' +
-            '<div style="color:var(--text-dim)">Market: ' + (g.line != null ? spreadTxt(-g.line) : '\u2013') + (g.ou != null ? ', ' + g.ou : '') + '</div>';
-      var big = [];
-      if (g.line != null && Math.abs(ourMargin + g.line) >= 4) big.push("spread " + Math.abs(ourMargin + g.line).toFixed(1));
-      if (g.ou != null && Math.abs(ourTotal - g.ou) >= 4) big.push("total " + Math.abs(ourTotal - g.ou).toFixed(1));
-      if (big.length) flag = '<div style="color:var(--accent);font-weight:600" title="We disagree with the market by 4+ points">4+ pt disagreement: ' + big.join(", ") + '</div>';
-    }
-    return '<div style="flex:0 0 230px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.78rem;line-height:1.5">' +
-      '<div style="color:var(--text-dim);font-size:.7rem">' + (g.time || "") + (g.neutral ? " · neutral" : "") + '</div>' +
-      '<div>' + ptTeam(g.away) + (g.neutral ? ' <span style="color:var(--text-dim)">vs</span> ' : ' <span style="color:var(--text-dim)">@</span> ') + ptTeam(g.home) + '</div>' +
-      '<div><b>' + ptName(fav) + ' ' + hi + '–' + lo + '</b> <span style="color:var(--text-dim)">(' + Math.round(Math.max(g.home_win, 1 - g.home_win) * 100) + '%)</span></div>' +
-      mkt + flag + '</div>';
+    var sSide = r.sEdge == null ? "" : (r.sEdge > 0 ? g.home + " " + signed(g.line) : g.away + " " + signed(-g.line));
+    var tSide = r.tEdge == null ? "" : (r.tEdge > 0 ? "Over" : "Under");
+    return '<tr>' +
+      '<td ' + dim + '>' + (g.time ? g.time.replace(" ET", "") : "TBA") + '</td>' +
+      '<td style="text-align:left">' + ptTeam(g.away) + (g.neutral ? ' <span ' + dim + '>vs</span> ' : ' <span ' + dim + '>@</span> ') + ptTeam(g.home) +
+        (r.early ? ' <span title="A team has played fewer than 5 games: not counted in the disagreement table" style="font-size:.65rem;color:var(--text-dim);border:1px solid var(--border);border-radius:4px;padding:0 4px;margin-left:4px">early</span>' : '') + '</td>' +
+      '<td style="text-align:left"><b>' + ptName(fav) + ' ' + hi + '–' + lo + '</b> <span ' + dim + '>' + Math.round(Math.max(g.home_win, 1 - g.home_win) * 100) + '%</span></td>' +
+      '<td style="text-align:center">' + spreadTxt(g, r.m) + '</td>' +
+      '<td style="text-align:center;color:var(--text-dim)">' + (g.line != null ? spreadTxt(g, -g.line) : "–") + '</td>' +
+      diffCell(r.sEdge, sSide) +
+      '<td style="text-align:center">' + fmt(r.t) + '</td>' +
+      '<td style="text-align:center;color:var(--text-dim)">' + (g.ou != null ? g.ou : "–") + '</td>' +
+      diffCell(r.tEdge, tSide) +
+      '</tr>';
   }).join("");
-  return '<h3 style="font-size:.9rem;margin:4px 0 6px">' + label + ' <span style="font-weight:400;color:var(--text-dim);font-size:.75rem">' + list.length + ' games · locked at tip-off</span></h3>' +
-    '<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px">' + cards + '</div>';
+
+  var btn = function(k, v, txt, on) {
+    return '<button class="pp-log-btn' + (on ? ' active' : '') + '" onclick="ptTodaySet(\'' + k + '\',' + (typeof v === "string" ? "\'" + v + "\'" : v) + ')">' + txt + '</button>';
+  };
+  var controls = '<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px">' +
+    '<span style="font-size:.72rem;color:var(--text-dim)">Show</span>' +
+    btn("min", 0, "All games", ptTodayMin === 0) + btn("min", 4, "4+ pt disagreement", ptTodayMin === 4) +
+    btn("min", 8, "8+", ptTodayMin === 8) + btn("min", 10, "10+", ptTodayMin === 10) +
+    '<span style="font-size:.72rem;color:var(--text-dim);margin-left:10px">Sort</span>' +
+    btn("sort", "time", "Tip time", ptTodaySort === "time") + btn("sort", "edge", "Biggest disagreement", ptTodaySort === "edge") +
+    '</div>';
+  var sub = 'style="top:29px;text-align:center"';
+  var table = list.length
+    ? '<div style="max-height:460px;overflow:auto;border:1px solid var(--border);border-radius:8px">' +
+      '<table><thead><tr>' +
+        '<th rowspan="2" style="text-align:left">Tip (ET)</th><th rowspan="2" style="text-align:left">Matchup</th><th rowspan="2" style="text-align:left">Projected</th>' +
+        '<th colspan="3" style="text-align:center">Spread</th><th colspan="3" style="text-align:center">Total</th></tr><tr>' +
+        '<th ' + sub + '>Us</th><th ' + sub + '>Market</th><th ' + sub + '>Diff</th>' +
+        '<th ' + sub + '>Us</th><th ' + sub + '>Market</th><th ' + sub + '>Diff</th>' +
+      '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div>'
+    : '<div style="padding:16px;text-align:center;color:var(--text-dim);border:1px solid var(--border);border-radius:8px">No games with a ' +
+      ptTodayMin + '+ point disagreement' + (day === today ? ' today' : '') + '.</div>';
+  return '<div id="ptToday" style="margin-bottom:16px">' +
+    '<h3 style="font-size:.9rem;margin:4px 0 6px">' + label + ' <span style="font-weight:400;color:var(--text-dim);font-size:.75rem">' +
+      (list.length === total ? total + ' games' : list.length + ' of ' + total + ' games') + ' · locked at tip-off · lines as of this morning</span></h3>' +
+    controls + table +
+    '<p class="pre-note" style="margin:6px 0 0">Diff = how far our number is from the market’s, and the side our numbers favor. A comparison, not betting picks.</p></div>';
 }
 
 function renderPredTracker() {
